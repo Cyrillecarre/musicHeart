@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bonjour{% endblock %}
+
+{% block body %}
+
+<h1>Bienvenue {{ app.user.name }} sur cette page de jeu</h1>
+<p>Vous voulez rejoindre une partie ?</p>
+<p> ! manque boucle de recherche table game</p>
+<p>Vous voulez créer une partie ?</p>
+<p><a href="{{ path('app_game') }}">Commencer une partie</a></p>
+
+{% endblock %}

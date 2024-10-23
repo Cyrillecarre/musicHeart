@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block body %}
+<h1>Envoyer un SMS aux participants</h1>
+<p>Cliquez sur un numéro pour envoyer un SMS à chaque participant.</p>
+
+<ul>
+    {% for sms in smsLinks %}
+        <li>
+            {{ sms.name }} - <a href="{{ sms.link }}">Envoyer un SMS à {{ sms.phone }}</a>
+        </li>
+    {% else %}
+        <li>Aucun participant trouvé.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

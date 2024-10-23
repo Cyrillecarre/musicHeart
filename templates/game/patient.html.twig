@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block body %}
+    <h1>Données du patient</h1>
+    {{ form_start(patientForm) }}
+        {{ form_row(patientForm.name, {'label': 'Nom du patient'}) }}
+        {{ form_row(patientForm.phone, {'label': 'Numéro de téléphone'}) }}
+        <button type="submit" class="btn">Enregistrer le patient</button>
+    {{ form_end(patientForm) }}
+
+    <ul>
+        {% for patient in patients %}
+            <li>{{ patient.name }} - {{ patient.phone }}</li>
+        {% else %}
+            <li>Aucun participant enregistré pour l'instant.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('create_participant') }}" class="btn">Gérer les participants</a>
+{% endblock %}

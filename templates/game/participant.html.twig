@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block body %}
+
+    <h1>Configurer les horaires de jeu</h1>
+    {{ form_start(gameForm) }}
+        {{ form_row(gameForm.end_date, {'label': 'horaire de fin de participation'}) }}
+        {{ form_row(gameForm.result_date, {'label': 'horaire de fin de jeu du patient et affichage des résultat'}) }}
+        <button type="submit" class="btn">Enregistrer les horaires</button>
+    {{ form_end(gameForm) }}
+
+    {% for game in games %}
+        <li>{{ game.endDate|date('d/m/Y H:i') }} - {{ game.resultDate|date('d/m/Y H:i') }}</li>
+    {% else %}
+        <li>Aucun horaire enregistré pour l'instant.</li>
+    {% endfor %}
+
+    <hr>
+
+    <h1>Selectionné le nombre de participants</h1>
+
+    <a href="{{ path('app_paiement')}}" class="btn btn-primary">De 1 à 20 participants <br>0.99€</a>
+<a href="{{ path('app_paiement')}}" class="btn btn-primary">De 21 à 50 participants <br>1.99€</a>
+<a href="{{ path('app_paiement') }}" class="btn btn-primary">Au-delà de 50 participants <br>4.99€</a>
+
+
+
+   <h2>Participants enregistrés</h2>
+    <ul>
+        {% for participant in participants %}
+            <li>{{ participant.name }} - {{ participant.phone }} - {{ participant.email }}</li>
+        {% else %}
+            <li>Aucun participant enregistré pour l'instant.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

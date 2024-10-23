@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+<h1>Bienvenue sur cette page de jeu</h1>
+<p>Vous voulez rejoindre une partie ?</p>
+<p><a href="{{ path('app_login') }}">Rejoindre une partie</a></p>
+<p>Vous voulez créer une partie ?</p>
+<p><a href="{{ path('app_register') }}">S'enregistrer pour commencer une partie</a></p>
+{% endblock %}

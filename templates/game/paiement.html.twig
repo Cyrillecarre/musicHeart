@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}paiement{% endblock %}
+
+{% block body %}
+
+<h1>Page de paiement</h1>
+
+<p>Merci pour votre achat ! Voici le lien vers votre espace privé :</p>
+
+<div>
+    <label for="prewrittenMessage">Message à envoyer aux participants :</label>
+    <textarea id="prewrittenMessage" rows="4" cols="50" readonly>
+        Bonjour,
+        
+        Vous êtes invité à participer à notre jeu pour aider {{ patient.name }} à passer ce douloureux moment.
+        La date limite pour jouer est le {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} et les résultats seront affichés le {{ game.resultDate ? game.resultDate|date('d/m/Y H:i') : 'N/A' }}.
+        Cliquez sur le lien suivant pour accéder à votre espace privé et participer : {{ privateLink }}
+
+        Merci de votre participation !
+    </textarea>
+    <button onclick="copyMessage()">Copier le message</button>
+</div>
+<p>Vous pouvez aussi copier le lien suivant pour l'envoyer à vos participants en sms ou email et ils auront accés au jeu:</p>
+
+<script>
+
+function copyMessage() {
+    var copyText = document.getElementById("prewrittenMessage");
+    copyText.select();
+    document.execCommand("copy");
+    alert("Message copié !");
+}
+</script>
+
+{% endblock %}
