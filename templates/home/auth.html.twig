@@ -3,11 +3,20 @@
 {% block title %}Bonjour{% endblock %}
 
 {% block body %}
+    <h1>Bienvenue 
+        {% if app.user %}
+            {{ app.user.name }}
+        {% else %}
+            Invité
+        {% endif %}
+        sur cette page de jeu
+    </h1>
 
-<h1>Bienvenue {{ app.user.name }} sur cette page de jeu</h1>
-<p>Vous voulez rejoindre une partie ?</p>
-<p> ! manque boucle de recherche table game</p>
-<p>Vous voulez créer une partie ?</p>
-<p><a href="{{ path('app_game') }}">Commencer une partie</a></p>
-
+    {% if game %}
+        <p>Vous avez déjà une partie en cours.</p>
+        <p><a href="{{ path('app_game', { 'id': game.id }) }}">Accéder à la partie</a></p>
+    {% else %}
+        <p>Vous voulez créer une partie ?</p>
+        <p><a href="{{ path('app_game') }}">Commencer une partie</a></p>
+    {% endif %}
 {% endblock %}

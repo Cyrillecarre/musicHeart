@@ -104,7 +104,7 @@ class GameController extends AbstractController
         }
     
         $token = Uuid::v4();
-        $privateLink = 'https://ton-jeu.com/participation?token=' . $token;
+        $privateLink = 'https://localhost:8001/add_participant?token=' . $token;
     
         return $this->render('game/paiement.html.twig', [
             'privateLink' => $privateLink,

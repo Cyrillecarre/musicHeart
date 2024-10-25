@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Participation;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Participant;
+use App\Entity\Game;
 
 class StartGameController extends AbstractController
 {
@@ -24,8 +25,7 @@ class StartGameController extends AbstractController
         $session = $request->getSession();
         $session->set('participant_id', $participantId);
 
-        return $this->redirectToRoute('choose_music', ['participantId' => $participantId]);
-
+        return $this->redirectToRoute('spotify_login', ['participantId' => $participantId]);
     }
 
     #[Route('/choose-music/{participantId}', name: 'choose_music')]
@@ -36,11 +36,9 @@ class StartGameController extends AbstractController
         $refreshToken = $session->get('spotify_refresh_token');
     
         if (!$accessToken) {
-            $this->addFlash('error', 'Vous devez vous connecter à Spotify pour choisir une musique.');
             return $this->redirectToRoute('spotify_login');
         }
-    
-        // Récupérer le participant depuis participantId
+
         $participant = $entityManager->getRepository(Participant::class)->find($participantId);
     
         if (!$participant) {
@@ -74,7 +72,7 @@ class StartGameController extends AbstractController
         return $this->render('start_game/choose_music.html.twig', [
             'tracks' => $tracks,
             'query' => $query,
-            'participant' => $participant,  // Transmettre le participant au template
+            'participant' => $participant,
         ]);
     }
     
@@ -145,17 +143,25 @@ class StartGameController extends AbstractController
     #[Route('/submit-music/{trackId}/{participantId}', name: 'submit_music')]
     public function submitMusic(string $trackId, int $participantId, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Récupérer le participant via l'ID passé en paramètre
         $participant = $entityManager->getRepository(Participant::class)->find($participantId);
 
         if (!$participant) {
             throw $this->createNotFoundException('Participant non trouvé.');
         }
 
+        $game = $entityManager->getRepository(Game::class)->findOneBy([
+            'admin' => $participant->getAdmin()
+        ]);
+    
+        if (!$game) {
+            throw $this->createNotFoundException('Aucun jeu trouvé pour ce participant.');
+        }
+
         if ($request->isMethod('POST')) {
             $supportText = $request->request->get('support_text');
 
             $participation = new Participation();
+            $participation->setGame($game); 
             $participation->setParticipant($participant);
             $participation->setMusicUrl('https://open.spotify.com/track/' . $trackId);
             $participation->setSupportText($supportText);
@@ -163,12 +169,19 @@ class StartGameController extends AbstractController
             $entityManager->persist($participation);
             $entityManager->flush();
 
-            return $this->redirectToRoute('thank_you'); // Redirection après soumission
+            return $this->redirectToRoute('thank_you');
         }
 
         return $this->render('start_game/support_text.html.twig', [
             'trackId' => $trackId,
+            'participant' => $participant,
         ]);
+    }
+
+    #[Route('/thank-you', name: 'thank_you')]
+    public function thankYou(): Response
+    {
+        return $this->render('start_game/thank_you.html.twig');
     }
     
 }

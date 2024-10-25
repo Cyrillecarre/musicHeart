@@ -5,6 +5,8 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Game;
 
 class HomeController extends AbstractController
 {
@@ -17,8 +19,18 @@ class HomeController extends AbstractController
     }
 
     #[Route('/auth', name: 'app_auth_page')]
-    public function authPage(): Response
+    public function authPage(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('home/auth.html.twig');
+        $user = $this->getUser();
+
+        if ($user) {
+            $game = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $user]);
+
+            return $this->render('home/auth.html.twig', [
+                'game' => $game,
+            ]);
+        }
+
+        return $this->redirectToRoute('app_login');
     }
 }

@@ -4,8 +4,7 @@
 
 {% block body %}
     <h1>Ajouter un texte de soutien</h1>
-
-    <form method="post" action="{{ path('submit_music', { 'trackId': trackId }) }}">
+    <form method="post" action="{{ path('submit_music', { 'trackId': trackId, 'participantId': participant.id }) }}">
         <label for="support_text">Texte de soutien (facultatif) :</label>
         <textarea name="support_text" id="support_text" rows="4" cols="50"></textarea>
         <button type="submit">Soumettre</button>

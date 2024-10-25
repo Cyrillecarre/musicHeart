@@ -13,7 +13,7 @@ class Participation
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
-    private ?Game $game_id = null;
+    private ?Game $game = null;
 
     #[ORM\ManyToOne(targetEntity: Participant::class, inversedBy: 'participations')]
     private ?Participant $participant = null;
@@ -32,14 +32,14 @@ class Participation
         return $this->id;
     }
 
-    public function getGameId(): ?Game
+    public function getGame(): ?Game
     {
-        return $this->game_id;
+        return $this->game;
     }
 
-    public function setGameId(?Game $game_id): static
+    public function setGame(?Game $game): static
     {
-        $this->game_id = $game_id;
+        $this->game = $game;
 
         return $this;
     }

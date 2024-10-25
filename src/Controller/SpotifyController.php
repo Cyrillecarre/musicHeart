@@ -12,14 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class SpotifyController extends AbstractController
 {
-    #[Route('/spotify-login', name: 'spotify_login')]
-    public function spotifyLogin(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/spotify-login/{participantId}', name: 'spotify_login')]
+    public function spotifyLogin(Request $request, int $participantId, EntityManagerInterface $entityManager): Response
     {
-        $participantId = $request->getSession()->get('participant_id');
-    
-        if (!$participantId) {
-            throw new \Exception('Le participantId est manquant.');
-        }
+        // Stockez le participant ID dans la session pour le récupérer après l'authentification
+        $request->getSession()->set('participant_id', $participantId);
     
         // Créer un identifiant de session unique
         $sessionId = uniqid('spotify_', true);
@@ -41,7 +38,6 @@ class SpotifyController extends AbstractController
         return $this->redirect($authorizationUrl);
     }
     
-
     #[Route('/callback', name: 'spotify_callback')]
     public function spotifyCallback(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -57,13 +53,13 @@ class SpotifyController extends AbstractController
         if (!$spotifySession) {
             throw new \Exception('Session Spotify invalide.');
         }
-
+    
         $participantId = $spotifySession->getParticipantId();
     
         $tokenResponse = $this->getSpotifyAccessToken($code);
         if (!isset($tokenResponse['access_token'])) {
             $this->addFlash('error', 'Erreur lors de la récupération du jeton d\'accès Spotify.');
-            return $this->redirectToRoute('spotify_login');
+            return $this->redirectToRoute('spotify_login', ['participantId' => $participantId]);
         }
     
         // Stocker les tokens dans la session pour des futures requêtes Spotify
@@ -73,8 +69,10 @@ class SpotifyController extends AbstractController
             $session->set('spotify_refresh_token', $tokenResponse['refresh_token']);
         }
     
+        // Rediriger vers `choose_music` après l'authentification
         return $this->redirectToRoute('choose_music', ['participantId' => $participantId]);
     }
+    
     
 
     private function getSpotifyAccessToken(string $code): array
@@ -125,8 +123,7 @@ class SpotifyController extends AbstractController
            '&scope=' . urlencode($scopes) . '&redirect_uri=' . urlencode($redirectUri);
     
         return $this->redirect($authUrl);
-    }
-    
+    }  
 }
 
 

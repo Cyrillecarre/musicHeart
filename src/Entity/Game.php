@@ -28,7 +28,7 @@ class Game
     /**
      * @var Collection<int, Participation>
      */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'game_id')]
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'game')]
     private Collection $participations;
 
     /**
@@ -96,7 +96,7 @@ class Game
     {
         if (!$this->participations->contains($participation)) {
             $this->participations->add($participation);
-            $participation->setGameId($this);
+            $participation->setGame($this);
         }
 
         return $this;
@@ -106,8 +106,8 @@ class Game
     {
         if ($this->participations->removeElement($participation)) {
             // set the owning side to null (unless already changed)
-            if ($participation->getGameId() === $this) {
-                $participation->setGameId(null);
+            if ($participation->getGame() === $this) {
+                $participation->setGame(null);
             }
         }
 
