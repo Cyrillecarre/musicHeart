@@ -24,15 +24,4 @@
     <a href="{{ path('app_paiement')}}" class="btn btn-primary">De 1 à 20 participants <br>0.99€</a>
 <a href="{{ path('app_paiement')}}" class="btn btn-primary">De 21 à 50 participants <br>1.99€</a>
 <a href="{{ path('app_paiement') }}" class="btn btn-primary">Au-delà de 50 participants <br>4.99€</a>
-
-
-
-   <h2>Participants enregistrés</h2>
-    <ul>
-        {% for participant in participants %}
-            <li>{{ participant.name }} - {{ participant.phone }} - {{ participant.email }}</li>
-        {% else %}
-            <li>Aucun participant enregistré pour l'instant.</li>
-        {% endfor %}
-    </ul>
 {% endblock %}

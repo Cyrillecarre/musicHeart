@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ParticipantController!{% endblock %}
+
+{% block body %}
+    <h1>Bienvenu, merci de participer </h1>
+    <p>Welcome to your new controller!</p>
+    {{ form_start(participantForm) }}
+        {{ form_row(participantForm.name, {'label': 'Nom, prenom'}) }}
+        {{ form_row(participantForm.email, {'label': 'email pour recevoir les résultats'}) }}
+        <button type="submit" class="btn">S'enregistrer</button>
+    {{ form_end(participantForm) }}
+{% endblock %}

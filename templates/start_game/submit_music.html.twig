@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello StartGameController!{% endblock %}
+
+{% block body %}
+
+<h1>Confirmer votre choix</h1>
+
+<p>Vous avez choisi la musique : {{ trackId }}</p>
+
+<form method="post" action="{{ path('submit_music', { 'trackId': trackId }) }}">
+    <label for="support_text">Message de soutien :</label>
+    <textarea name="support_text" id="support_text"></textarea>
+
+    <button type="submit">Soumettre</button>
+</form>
+
+{% endblock %}

@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Patient;
 use App\Form\PatientType;
 use App\Entity\Participant;
-use App\Form\ParticipantType;
 use App\Entity\Game;
 use App\Form\GameType;
 use Symfony\Component\Uid\Uuid;
@@ -54,20 +53,6 @@ class GameController extends AbstractController
     #[Route('/create-participant', name: 'create_participant')]
     public function createParticipant(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $participant = new Participant();
-        $participantForm = $this->createForm(ParticipantType::class, $participant);
-        $participantForm->handleRequest($request);
-
-        if ($participantForm->isSubmitted() && $participantForm->isValid()) {
-            $admin = $this->getUser();
-            $participant->setAdmin($admin);
-
-            $entityManager->persist($participant);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('create_participant');
-        }
-
         $participants = $entityManager->getRepository(Participant::class)->findAll();
 
         $game = new Game();
@@ -87,7 +72,6 @@ class GameController extends AbstractController
         $games = $entityManager->getRepository(Game::class)->findAll();
 
         return $this->render('game/participant.html.twig', [
-            'participantForm' => $participantForm->createView(),
             'participants' => $participants,
             'gameForm' => $gameForm->createView(),
             'games' => $games,

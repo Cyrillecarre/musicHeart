@@ -17,7 +17,6 @@ class ParticipantType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('phone')
             ->add('email')
         ;
     }

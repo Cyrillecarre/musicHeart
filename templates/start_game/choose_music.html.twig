@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choisir une musique{% endblock %}
+
+{% block body %}
+    <h1>Choisir une musique</h1>
+
+    <form method="get" action="{{ path('choose_music',  { participantId: participant.id }) }}">
+        <input type="text" name="query" value="{{ query|default('') }}" placeholder="Rechercher une musique">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <ul>
+            {% for track in tracks %}
+                <li>
+                    <img src="{{ track.album.images[0].url }}" alt="Album cover" width="50">
+                    {{ track.name }} - {{ track.artists[0].name }}
+                    <a href="{{ path('submit_music', { trackId: track.id, participantId: participant.id }) }}">
+                        Choisir cette musique
+                    </a>
+                </li>
+            {% else %}
+                <li>Aucun résultat trouvé</li>
+            {% endfor %}
+    </ul>
+{% endblock %}
+
+
+

@@ -1,10 +1,7 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\ParticipationRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ParticipationRepository::class)]
@@ -18,11 +15,8 @@ class Participation
     #[ORM\ManyToOne(inversedBy: 'participations')]
     private ?Game $game_id = null;
 
-    /**
-     * @var Collection<int, Participant>
-     */
-    #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'participation')]
-    private Collection $participant_id;
+    #[ORM\ManyToOne(targetEntity: Participant::class, inversedBy: 'participations')]
+    private ?Participant $participant = null;
 
     #[ORM\Column(length: 255)]
     private ?string $music_url = null;
@@ -32,18 +26,6 @@ class Participation
 
     #[ORM\Column(nullable: true)]
     private ?bool $is_correct = null;
-
-    /**
-     * @var Collection<int, Guess>
-     */
-    #[ORM\OneToMany(targetEntity: Guess::class, mappedBy: 'music_url_id')]
-    private Collection $guesses;
-
-    public function __construct()
-    {
-        $this->participant_id = new ArrayCollection();
-        $this->guesses = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -62,32 +44,14 @@ class Participation
         return $this;
     }
 
-    /**
-     * @return Collection<int, Participant>
-     */
-    public function getParticipantId(): Collection
+    public function getParticipant(): ?Participant
     {
-        return $this->participant_id;
+        return $this->participant;
     }
 
-    public function addParticipantId(Participant $participantId): static
+    public function setParticipant(?Participant $participant): static
     {
-        if (!$this->participant_id->contains($participantId)) {
-            $this->participant_id->add($participantId);
-            $participantId->setParticipation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipantId(Participant $participantId): static
-    {
-        if ($this->participant_id->removeElement($participantId)) {
-            // set the owning side to null (unless already changed)
-            if ($participantId->getParticipation() === $this) {
-                $participantId->setParticipation(null);
-            }
-        }
+        $this->participant = $participant;
 
         return $this;
     }
@@ -124,36 +88,6 @@ class Participation
     public function setCorrect(?bool $is_correct): static
     {
         $this->is_correct = $is_correct;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Guess>
-     */
-    public function getGuesses(): Collection
-    {
-        return $this->guesses;
-    }
-
-    public function addGuess(Guess $guess): static
-    {
-        if (!$this->guesses->contains($guess)) {
-            $this->guesses->add($guess);
-            $guess->setMusicUrlId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGuess(Guess $guess): static
-    {
-        if ($this->guesses->removeElement($guess)) {
-            // set the owning side to null (unless already changed)
-            if ($guess->getMusicUrlId() === $this) {
-                $guess->setMusicUrlId(null);
-            }
-        }
 
         return $this;
     }
