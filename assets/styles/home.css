@@ -1,0 +1,112 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(105deg, #A2D2E6 25%, #B2E5DA 50%, #D3C6E8 75%);
+    background-size: 200% 200%;
+    font-family: 'Roboto', sans-serif;
+}
+
+.enteteTitre {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 6rem;
+}
+
+.logo {
+    position: absolute;
+    top: 4rem;
+    left: 10rem;
+    width: 250px;
+    height: 250px;
+    background-image: url('path/to/logo.png');
+    background-size: cover;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0) 100%);
+    border-radius: 20%;
+}
+
+.titre {
+    font-size: 5rem;
+    margin-top: 5rem;
+    text-align: center;
+    font-family: 'Pacifico';
+}
+
+.boutonEnregistrer {
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    justify-content: center;
+    align-items: center;
+    width: 25rem;
+    height: 3rem;
+    margin: 0 auto;
+    margin-bottom: 5rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(105deg, #A2D2E6, #B2E5DA, #D3C6E8);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.boutonEnregistrer a {
+    text-decoration: none;
+}
+
+.boutonEnregistrer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.boutonEnregistrer:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.imagePatient {
+    display: flex;
+    justify-content: center;
+    width: 40%;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+}
+
+.descriptif {
+    display: flex;
+    width: 75%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    margin: 0 auto;
+}
+
+.descriptifContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+.descriptifContent h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.descriptifContent p {
+    font-size: 1.2rem;
+    padding: 5px;
+    text-align: center;
+    font-style: italic;
+}

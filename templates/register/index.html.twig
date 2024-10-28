@@ -2,19 +2,33 @@
 
 {% block title %}Register{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/register.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Register</h1>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo" class="img">
+        <h1 class="titre">Vous êtes l'administrateur du jeu.</h1>
+    </div>
+    <div class="procedure">
+        <h2>Procédure :</h2>
+        <ul>
+            <li>Vous enregistrez vos identifiants pour le jeu.</li>
+            <li>Vous enregistrez le patient.</li>
+            <li>Vous distribuez le lien au personne que vous souhaitez inclure pour participer.</li>
+        </ul>
+    </div>
+    <div class="form">
+        {{ form_errors(registrationForm) }}
 
-    {{ form_errors(registrationForm) }}
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.name) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+        {{ form_start(registrationForm, {'attr':{'class': 'formStart'}}) }}
+            {{ form_row(registrationForm.name, {'label': 'Nom, prénom', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {{ form_row(registrationForm.email, {'label': 'Email', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {{ form_row(registrationForm.plainPassword, {'label': 'Mot de passe', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {{ form_row(registrationForm.confirmPassword, {'label': 'Confirmer le mot de passe', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {{ form_row(registrationForm.agreeTerms, {'label': 'Je valide les conditions générales', 'attr': {'class': 'form-check-input'}, 'label_attr': {'class': 'form-label'}}) }}
+            <button type="submit" class="boutonEnregistrer">Enregistrer</button>
+        {{ form_end(registrationForm) }}
+    </div>
 {% endblock %}

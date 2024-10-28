@@ -15,20 +15,17 @@ class SpotifyController extends AbstractController
     #[Route('/spotify-login/{participantId}', name: 'spotify_login')]
     public function spotifyLogin(Request $request, int $participantId, EntityManagerInterface $entityManager): Response
     {
-        // Stockez le participant ID dans la session pour le récupérer après l'authentification
+
         $request->getSession()->set('participant_id', $participantId);
-    
-        // Créer un identifiant de session unique
+
         $sessionId = uniqid('spotify_', true);
     
-        // Enregistrer la session Spotify en base de données
         $spotifySession = new SpotifySession();
         $spotifySession->setSessionId($sessionId);
         $spotifySession->setParticipantId($participantId);
         $entityManager->persist($spotifySession);
         $entityManager->flush();
     
-        // Informations pour l'authentification Spotify
         $clientId = $_ENV['SPOTIFY_CLIENT_ID'];
         $redirectUri = $_ENV['SPOTIFY_REDIRECT_URI'];
         $scopes = 'user-read-private user-read-email playlist-read-private';
@@ -42,39 +39,36 @@ class SpotifyController extends AbstractController
     public function spotifyCallback(Request $request, EntityManagerInterface $entityManager): Response
     {
         $code = $request->query->get('code');
-        $sessionId = $request->query->get('state'); // Récupération de l'identifiant de session
-    
-        if (!$code || !$sessionId) {
-            return $this->redirectToRoute('spotify_login');
+        $sessionId = $request->query->get('state');
+
+        if (!$code) {
+            // Redirige vers l'authentification Spotify appropriée en cas d'échec
+            return $this->redirectToRoute($sessionId ? 'spotify_login' : 'spotify_auth');
         }
-    
-        // Récupérer la session depuis la base de données
-        $spotifySession = $entityManager->getRepository(SpotifySession::class)->findOneBy(['sessionId' => $sessionId]);
-        if (!$spotifySession) {
-            throw new \Exception('Session Spotify invalide.');
-        }
-    
-        $participantId = $spotifySession->getParticipantId();
-    
+
         $tokenResponse = $this->getSpotifyAccessToken($code);
         if (!isset($tokenResponse['access_token'])) {
             $this->addFlash('error', 'Erreur lors de la récupération du jeton d\'accès Spotify.');
-            return $this->redirectToRoute('spotify_login', ['participantId' => $participantId]);
+            return $this->redirectToRoute($sessionId ? 'spotify_login' : 'spotify_auth');
         }
-    
-        // Stocker les tokens dans la session pour des futures requêtes Spotify
+
+        // Stocker le token dans la session
         $session = $request->getSession();
         $session->set('spotify_access_token', $tokenResponse['access_token']);
         if (isset($tokenResponse['refresh_token'])) {
             $session->set('spotify_refresh_token', $tokenResponse['refresh_token']);
         }
-    
-        // Rediriger vers `choose_music` après l'authentification
+
+        // Vérifie si l'utilisateur est un administrateur (patient) ou un participant
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('patient_game_index');
+        }
+
+        // Sinon, redirige vers `choose_music` avec `participantId`
+        $participantId = $session->get('participant_id');
         return $this->redirectToRoute('choose_music', ['participantId' => $participantId]);
     }
     
-    
-
     private function getSpotifyAccessToken(string $code): array
     {
         $clientId = $_ENV['SPOTIFY_CLIENT_ID'];

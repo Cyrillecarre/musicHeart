@@ -14,6 +14,10 @@ use App\Entity\Game;
 use App\Form\GameType;
 use Symfony\Component\Uid\Uuid;
 use App\Entity\Admin;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class GameController extends AbstractController
 {
@@ -42,7 +46,8 @@ class GameController extends AbstractController
 
             return $this->redirectToRoute('create_patient');
         }
-        $patient = $entityManager->getRepository(Patient::class)->findAll();
+        $admin = $this->getUser();
+        $patient = $entityManager->getRepository(Patient::class)->findBy(['admin' => $admin]);
 
         return $this->render('game/patient.html.twig', [
             'patientForm' => $form->createView(),
@@ -80,11 +85,10 @@ class GameController extends AbstractController
     }
 
     #[Route('/paiement', name: 'app_paiement')]
-    public function paiement(EntityManagerInterface $entityManager): Response
+    public function paiement(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): Response
     {
         /** @var Admin $admin */
         $admin = $this->getUser();
-
         $patients = $admin->getPatients();
 
         if ($patients->isEmpty()) {
@@ -96,20 +100,22 @@ class GameController extends AbstractController
         if (!$patient || !$patient->getName()) {
             throw $this->createNotFoundException('Patient sans nom trouvé.');
         }
-
+    
         $game = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $admin]);
-
+    
         if (!$game) {
             throw $this->createNotFoundException('Aucun jeu trouvé.');
         }
-    
-        $token = Uuid::v4();
-        $privateLink = 'https://localhost:8001/add_participant?token=' . $token;
+
+        $participantToken = Uuid::v4();
+        $participantLink = $urlGenerator->generate('add_participant', ['token' => $participantToken], UrlGeneratorInterface::ABSOLUTE_URL);
+
     
         return $this->render('game/paiement.html.twig', [
-            'privateLink' => $privateLink,
-            'patient' => $patient,
+            'participantLink' => $participantLink,
             'game' => $game,
+            'patient' => $patient,
         ]);
     }
+
 }    

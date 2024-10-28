@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Jeu d'association{% endblock %}
+
+{% block body %}
+    <h1>Associez les musiques aux participants</h1>
+
+    <div id="music-container">
+        {% for music in musicDetails %}
+            <div class="music-item" data-music-id="{{ music.url }}" onclick="selectMusic('{{ music.url }}')" style="border: 1px solid #ddd; padding: 10px; margin: 10px; cursor: pointer;">
+                <iframe src="{{ music.url | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                <p>Nom de la musique : {{ music.name }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2>Participants</h2>
+    <div id="participant-container">
+        {% for participation in participations %}
+            <div class="participant-item" data-participant-id="{{ participation.participant.id }}" onclick="associateParticipant('{{ participation.participant.id }}')" style="border: 1px solid #ddd; padding: 10px; margin: 10px; cursor: pointer;">
+                <p>Participant : {{ participation.participant.name }}</p>
+                <p>Message de soutien : {{ participation.getSupportText() }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <button onclick="submitAssociations()">Soumettre</button>
+
+    <script>
+    let selectedMusic = null;
+    let associations = {};
+
+    function selectMusic(musicId) {
+        selectedMusic = musicId;
+        document.querySelectorAll('.music-item').forEach(item => item.style.backgroundColor = '');
+        document.querySelector(`[data-music-id="${musicId}"]`).style.backgroundColor = '#f0f8ff';
+        alert('Musique sélectionnée');
+    }
+
+    function associateParticipant(participantId) {
+        if (selectedMusic) {
+            associations[selectedMusic] = participantId;
+            alert('Association enregistrée : Musique ' + selectedMusic + ' -> Participant ' + participantId);
+            selectedMusic = null;
+            document.querySelectorAll('.music-item').forEach(item => item.style.backgroundColor = '');
+        } else {
+            alert('Sélectionnez d\'abord une musique.');
+        }
+    }
+
+    function submitAssociations() {
+        fetch("{{ path('submit_association') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token("submit") }}'
+            },
+            body: JSON.stringify({ associations })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Parcourez les résultats et appliquez les bordures
+            for (const [musicId, isCorrect] of Object.entries(data.results)) {
+                const musicElement = document.querySelector(`[data-music-id="${musicId}"]`);
+                if (isCorrect) {
+                    musicElement.style.border = '3px solid green';
+                } else {
+                    musicElement.style.border = '3px solid red';
+                }
+            }
+        });
+    }
+</script>
+
+{% endblock %}

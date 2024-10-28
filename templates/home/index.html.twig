@@ -2,7 +2,36 @@
 
 {% block title %}Hello HomeController!{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/home.css') }}">
+{% endblock %}
+
 {% block body %}
-<h1>Bienvenue sur cette page de jeu</h1>
-<p><a href="{{ path('app_register') }}">S'enregistrer pour commencer une partie</a></p>
+<div class="enteteTitre">
+    <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo" class="img">
+    <h1 class="titre">MUSIC HEART</h1>
+</div>
+<button class="boutonEnregistrer"><a href="{{ path('app_register') }}">S'enregistrer pour commencer une partie</a></button>
+<div class="descriptif">
+    <div class="descriptifContent">
+        <h2>Comment jouer ?</h2>
+        <p>Le but du jeu est de retrouver qui a publié la musique.
+        </p>
+        <p>Les bienfait de la musique sur le moral et la santé ne sont plus à prouver.
+        </p>
+        <p>Chaque musique est acompagné d'un message de soutient.
+        </p>
+        <p>Vous pouvez jouer seul ou à plusieurs.
+        </p>
+        <p>Une playlist émotion qui ne laisse pas indiférent.
+        </p>
+    </div>
+    <div class="descriptifContent">
+        <img class="imagePatient" src="{{ asset('images/patient.png') }}" alt="patient" class="img">
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('scripts/home.js') }}"></script>
 {% endblock %}

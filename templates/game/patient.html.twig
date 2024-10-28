@@ -2,21 +2,38 @@
 
 {% block title %}Hello GameController!{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/create_patient.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Données du patient</h1>
-    {{ form_start(patientForm) }}
-        {{ form_row(patientForm.name, {'label': 'Nom du patient'}) }}
-        {{ form_row(patientForm.phone, {'label': 'Numéro de téléphone'}) }}
-        <button type="submit" class="btn">Enregistrer le patient</button>
-    {{ form_end(patientForm) }}
-
-    <ul>
-        {% for patient in patients %}
-            <li>{{ patient.name }} - {{ patient.phone }}</li>
-        {% else %}
-            <li>Aucun participant enregistré pour l'instant.</li>
-        {% endfor %}
-    </ul>
-
-    <a href="{{ path('create_participant') }}" class="btn">Gérer les participants</a>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo" class="img">
+        <h1 class="titre">Données du patient</h1>
+    </div>
+    <div class="form">
+        {{ form_start(patientForm, {'attr':{'class': 'formStart'}}) }}
+            {{ form_row(patientForm.name, {'label': 'Nom du patient', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {{ form_row(patientForm.phone, {'label': 'Numéro de téléphone', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {% if patients is empty %}
+                <button type="submit" class="boutonEnregistrer">Enregistrer le patient</button>
+            {% endif %}
+        {{ form_end(patientForm) }}
+    </div>
+    <div>
+        <ul>
+            {% for patient in patients %}
+            <div class="patient">
+                <img class="patientLogo" src="{{ asset('images/patientLogo.png') }}" alt="patientLogo" class="img">
+                <li class="patientName">{{ patient.name }}</li>
+                <li class="patientPhone">{{ patient.phone }}</li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
+    {% if patients is not empty %}
+        <button class="boutonEnregistrer">
+            <a href="{{ path('create_participant') }}">Gérer les participants</a>
+        </button>
+    {% endif %}
 {% endblock %}

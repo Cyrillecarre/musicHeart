@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(105deg, #A2D2E6 25%, #B2E5DA 50%, #D3C6E8 75%);
+    background-size: 200% 200%;
+    font-family: 'Roboto', sans-serif;
+}
+
+.enteteTitre {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 6rem;
+}
+
+.logo {
+    position: absolute;
+    top: 4rem;
+    left: 10rem;
+    width: 250px;
+    height: 250px;
+    background-image: url('path/to/logo.png');
+    background-size: cover;
+    background-position: center;
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 0) 100%);
+    border-radius: 20%;
+}
+
+.titre {
+    font-size: 3rem;
+    margin-top: 5rem;
+    text-align: center;
+    font-family: 'Pacifico';
+}
+
+.procedure {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    margin-top: 5rem;
+    width: 80%;
+}
+
+.procedure h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    padding-top: 5rem;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.formStart{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    margin-bottom: 1rem;
+    gap: 1.5rem;
+}
+
+.form-control {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 1rem;
+    gap: 2rem;
+    border-radius: 5px;
+    height: 2rem;
+    background: linear-gradient(105deg, #A2D2E6, #B2E5DA, #D3C6E8);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: #fff;
+    cursor: text;
+}
+
+.form-label {
+    display: flex;
+    font-size: 1rem;
+    font-style: italic;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    display: flex;
+    width: 2rem;
+    height: 1rem;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.boutonEnregistrer {
+    display: flex;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    justify-content: center;
+    align-items: center;
+    width: 15rem;
+    height: 2rem;
+    margin: 0 auto;
+    margin-bottom: 5rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(105deg, #A2D2E6, #B2E5DA, #D3C6E8);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.boutonEnregistrer a {
+    text-decoration: none;
+}
+
+.boutonEnregistrer:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.boutonEnregistrer:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}

@@ -2,21 +2,29 @@
 
 {% block title %}Bonjour{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/register.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Bienvenue 
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo" class="img">
+        <h1 class="titre">Super ! 
         {% if app.user %}
             {{ app.user.name }}
         {% else %}
             Invité
         {% endif %}
-        sur cette page de jeu
-    </h1>
+        </h1>
+    </div>
 
     {% if game %}
         <p>Vous avez déjà une partie en cours.</p>
         <p><a href="{{ path('app_game', { 'id': game.id }) }}">Accéder à la partie</a></p>
     {% else %}
-        <p>Vous voulez créer une partie ?</p>
-        <p><a href="{{ path('app_game') }}">Commencer une partie</a></p>
+    <div class="procedure">
+        <h2>Vous êtes enregistré comme administrateur de la partie</h2>
+        <button class="boutonEnregistrer"><a href="{{ path('create_patient') }}">Enregistrons le patient</a></button>
+    </div>
     {% endif %}
 {% endblock %}
