@@ -1,27 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello GameController!{% endblock %}
+{% block title %}Configuration horaires{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/create_horaire.css') }}">
+{% endblock %}
 
 {% block body %}
-
-    <h1>Configurer les horaires de jeu</h1>
-    {{ form_start(gameForm) }}
-        {{ form_row(gameForm.end_date, {'label': 'horaire de fin de participation'}) }}
-        {{ form_row(gameForm.result_date, {'label': 'horaire de fin de jeu du patient et affichage des résultat'}) }}
-        <button type="submit" class="btn">Enregistrer les horaires</button>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Configurer les horaires de jeu</h1>
+    </div>
+    <div class="form">
+    {{ form_start(gameForm, {'attr':{'class': 'formStart'}}) }}
+        {{ form_row(gameForm.end_date, {'label': 'horaire de fin de participation', 'attr': {'class': 'form-control datetime-picker'}}) }}
+        {{ form_row(gameForm.result_date, {'label': 'horaire de fin de jeu du patient et affichage des résultat', 'attr': {'class': 'form-control datetime-picker'}}) }}
+        {% if games is empty %}
+            <button type="submit" class="boutonEnregistrer">Enregistrer les horaires</button>
+        {% endif %}
     {{ form_end(gameForm) }}
+    </div>
+    <div>
+        <ul>
+            {% for game in games %}
+            <div class="patient">
+                <img class="patientLogo" src="{{ asset('images/patientLogo.png') }}" alt="patientLogo">
+                <li class="patientName">{{ game.endDate|date('d/m/Y H:i') }}</li>
+                <li class="patientPhone">{{ game.resultDate|date('d/m/Y H:i') }}</li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
+    <button class="boutonEnregistrer">
+        <a href="{{ path('app_paiement') }}">Message aux participants</a>
+    </button>
 
-    {% for game in games %}
-        <li>{{ game.endDate|date('d/m/Y H:i') }} - {{ game.resultDate|date('d/m/Y H:i') }}</li>
-    {% else %}
-        <li>Aucun horaire enregistré pour l'instant.</li>
-    {% endfor %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const datePickers = document.querySelectorAll('.datetime-picker');
 
-    <hr>
-
-    <h1>Selectionné le nombre de participants</h1>
-
-    <a href="{{ path('app_paiement')}}" class="btn btn-primary">De 1 à 20 participants 0.99€</a>
-<a href="{{ path('app_paiement')}}" class="btn btn-primary">De 21 à 50 participants 1.99€</a>
-<a href="{{ path('app_paiement') }}" class="btn btn-primary">Au-delà de 50 participants 4.99€</a>
+        datePickers.forEach(picker => {
+            picker.addEventListener('focus', function() {
+                this.showPicker();
+            });
+        });
+    });
+</script>
 {% endblock %}

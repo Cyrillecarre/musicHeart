@@ -2,25 +2,38 @@
 
 {% block title %}paiement{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/paiement.css') }}">
+{% endblock %}
+
 {% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Page de paiement</h1>
+    </div>
 
-<h1>Page de paiement</h1>
+    <h2 class="titre2">Selectionnez votre mode de jeu :</h2>
 
-<p>Merci pour votre achat ! Voici le lien vers votre espace privé :</p>
+    <div class="paiement">
+        <button class="boutonEnregistrer">2 à 5 personnes : <br>FREE</button>
+        <button class="boutonEnregistrer">6 à 10 personnes : <br>0,99€</button>
+        <button class="boutonEnregistrer">11 personnes et plus : <br>1,99€</button>
+    </div>
 
-<div>
-    <label for="prewrittenMessage">Message à envoyer aux participants :</label>
-    <textarea id="prewrittenMessage" rows="4" cols="50" readonly>
-        Bonjour,
-        
-        Vous êtes invité à participer à notre jeu pour aider {{ patient.name }} à passer ce douloureux moment.
-        La date limite pour jouer est le {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} et les résultats seront affichés le {{ game.resultDate ? game.resultDate|date('d/m/Y H:i') : 'N/A' }}.
-        Cliquez sur le lien suivant pour accéder à votre espace privé et participer : {{ participantLink }}
+    <h2 class="titre2">Merci pour votre achat !</h2>
+    <div class="paiement">
+        <label for="prewrittenMessage">Message à envoyer aux participants :</label>
+        <textarea id="prewrittenMessage" rows="4" cols="50" readonly>
+            Bonjour,
+            
+            Vous êtes invité à participer à notre jeu pour aider {{ patient.name }} à passer ce douloureux moment.
+            La date limite pour jouer est le {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} et les résultats seront affichés le {{ game.resultDate ? game.resultDate|date('d/m/Y H:i') : 'N/A' }}.
+            Cliquez sur le lien suivant pour accéder à votre espace privé et participer : {{ participantLink }}
 
-        Merci de votre participation !
-    </textarea>
-    <button onclick="copyMessage()">Copier le message</button>
-</div>
+            Merci de votre participation !
+        </textarea>
+        <button onclick="copyMessage()">Copier le message</button>
+    </div>
 <p>Vous pouvez aussi copier le lien suivant pour l'envoyer à vos participants en sms ou email et ils auront accés au jeu:</p>
 
 <script>

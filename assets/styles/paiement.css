@@ -33,10 +33,26 @@ body {
 }
 
 .titre {
-    font-size: 5rem;
+    font-size: 3rem;
     margin-top: 10rem;
     text-align: center;
     font-family: 'Pacifico';
+}
+
+.titre2 {
+    font-size: 2rem;
+    text-align: center;
+    font-family: 'Pacifico';
+}
+
+.paiement {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    padding-top: 5rem;
+    width: 50%;
+    margin: 0 auto;
 }
 
 .boutonEnregistrer {
@@ -45,12 +61,12 @@ body {
     font-size: 1rem;
     justify-content: center;
     align-items: center;
-    width: 25rem;
-    height: 3rem;
+    width: 15rem;
+    height: 4rem;
     margin: 0 auto;
     margin-bottom: 5rem;
     font-weight: bold;
-    color: #fff;
+    color: rgb(45, 136, 226);
     background: linear-gradient(105deg, #A2D2E6, #B2E5DA, #D3C6E8);
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 25px;
@@ -71,42 +87,4 @@ body {
 .boutonEnregistrer:active {
     transform: translateY(1px);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-}
-
-.imagePatient {
-    display: flex;
-    justify-content: center;
-    width: 40%;
-    align-items: center;
-    margin-bottom: 2rem;
-    border-radius: 10px;
-}
-
-.descriptif {
-    display: flex;
-    width: 75%;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 2rem;
-    margin: 0 auto;
-}
-
-.descriptifContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-}
-
-.descriptifContent h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-.descriptifContent p {
-    font-size: 1.2rem;
-    padding: 5px;
-    text-align: center;
-    font-style: italic;
 }

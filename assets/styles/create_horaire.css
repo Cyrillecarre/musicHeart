@@ -60,6 +60,7 @@ body {
 .form-control {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     width: 100%;
     margin-bottom: 1rem;
     gap: 2rem;
@@ -69,6 +70,14 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.2);
     color: #fff;
     cursor: text;
+}
+
+.form-control input {
+    text-align: center;
+}
+
+input[type="date"], input[type="datetime-local"], input[type="time"] {
+    text-align: center;
 }
 
 .form-label {
@@ -93,7 +102,7 @@ body {
     font-size: 1rem;
     justify-content: center;
     align-items: center;
-    width: 15rem;
+    width: 17rem;
     height: 2rem;
     margin: 0 auto;
     margin-bottom: 5rem;
