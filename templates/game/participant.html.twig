@@ -19,6 +19,7 @@
         {% endif %}
     {{ form_end(gameForm) }}
     </div>
+    {% if games is not empty %}
     <div>
         <ul>
             {% for game in games %}
@@ -26,11 +27,11 @@
                 <img class="patientLogo" src="{{ asset('images/patientLogo.png') }}" alt="patientLogo">
                 <li class="patientName">{{ game.endDate|date('d/m/Y H:i') }}</li>
                 <li class="patientPhone">{{ game.resultDate|date('d/m/Y H:i') }}</li>
+                 <a href="{{ path('edit_game', { id: game.id }) }}" class="boutonModifier">Modifier les horaires</a>
             </div>
             {% endfor %}
         </ul>
     </div>
-    {% if games is not empty %}
         <button class="boutonEnregistrer">
             <a href="{{ path('app_paiement') }}">Message aux participants</a>
         </button>

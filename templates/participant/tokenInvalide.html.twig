@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Participant{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/register.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">La date pour participer est expiré. Désolé...</h1>
+    </div>
+{% endblock %}

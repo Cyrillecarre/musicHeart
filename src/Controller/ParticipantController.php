@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Participant;
 use App\Form\ParticipantType;
 use App\Entity\Admin;
+use App\Entity\AccessToken;
 
 class ParticipantController extends AbstractController
 {
@@ -22,19 +23,38 @@ class ParticipantController extends AbstractController
         ]);
     }
 
-    #[Route('/add_participant/{adminId}', name: 'add_participant')]
-    public function createParticipant(int $adminId, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $admin = $entityManager->getRepository(Admin::class)->find($adminId);
     
+    #[Route('/add_participant/{adminId}/{token}', name: 'add_participant')]
+    public function createParticipant(string $token, int $adminId, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifier l'existence de l'administrateur
+        $admin = $entityManager->getRepository(Admin::class)->find($adminId);
         if (!$admin) {
             throw $this->createNotFoundException('Admin non trouvé.');
         }
     
+        // Vérifier le token d'accès
+        $accessToken = $entityManager->getRepository(AccessToken::class)->findOneBy(['token' => $token]);
+        if (!$accessToken) {
+            return $this->render('participant/tokenInvalide.html.twig', [
+                'message' => 'Token invalide.',
+            ]);
+        }
+    
+        // Vérifier la validité du token
+        $currentDate = new \DateTime();
+        if ($currentDate > $accessToken->getExpirationDate()) {
+            return $this->render('participant/tokenInvalide.html.twig', [
+                'message' => 'Le token a expiré.',
+            ]);
+        }
+    
+        // Création du formulaire de participant
         $participant = new Participant();
         $participantForm = $this->createForm(ParticipantType::class, $participant);
         $participantForm->handleRequest($request);
     
+        // Traitement du formulaire
         if ($participantForm->isSubmitted() && $participantForm->isValid()) {
             $participant->setAdmin($admin);
             $participant->setRoles(['ROLE_USER']);

@@ -13,12 +13,14 @@
     </div>
     
     {% if activeGame is defined %}
-        <div class="game-detail" onclick="window.location.href='{{ path('app_paiement', {adminId: activeGame.admin.id}) }}'">
+        <div class="game-detail">
             <h2>Partie en cours</h2>
             <p><strong>Patient :</strong> {{ activeGame.admin.name }}</p>
             <p><strong>Date de fin de participation :</strong> {{ activeGame.endDate|date('d/m/Y H:i') }}</p>
             <p><strong>Date de fin du jeu :</strong> {{ activeGame.resultDate|date('d/m/Y H:i') }}</p>
-            <button class="boutonEnregistrer">Voir les détails</button>
+            <a href="{{ path('create_participant', {adminId: activeGame.admin.id}) }}" class="boutonEnregistrer">Modifier les horaires</a>
+
+            <a href="{{ path('app_paiement', {adminId: activeGame.admin.id}) }}" class="boutonEnregistrer">rediriger vers les lien des joueurs</a>
         </div>
     {% else %}
         <div class="procedure">

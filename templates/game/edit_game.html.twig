@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Configuration horaires{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/create_horaire.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Configurer les horaires de jeu</h1>
+    </div>
+    <div class="form">
+        {{ form_start(gameForm) }}
+            {{ form_row(gameForm.end_date, {'label': 'Nouvel horaire de fin de participation'}) }}
+            {{ form_row(gameForm.result_date, {'label': 'Nouvel horaire de fin de jeu'}) }}
+            <button type="submit" class="boutonEnregistrer">Enregistrer les modifications</button>
+        {{ form_end(gameForm) }}
+    </div>
+{% endblock %}
