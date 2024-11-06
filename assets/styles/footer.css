@@ -1,0 +1,81 @@
+.footer {
+    display: flex;
+    flex-direction: row;
+    background-color: black;
+    height: 7rem;
+}
+
+.linkFooter {
+    color: white;
+    cursor: pointer;
+}
+
+.footerDescription {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    color: white;
+}
+
+.footerDescription a {
+    color: white;
+    cursor: pointer;
+}
+
+.facebook {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin-right: 6rem;
+}
+
+
+.btnMention {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    width: 8rem;
+    height: 1.5rem;
+}
+
+@media only screen and (max-width: 768px) {
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        background-color: black;
+        height: 42rem;
+    }
+
+    .footerDescription {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        color: white;
+    }
+
+    .facebook {
+        display: flex;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        margin-right: 0;
+    }
+
+    .btnMention {
+        display: flex;
+        justify-content: center;
+        width: 90%;
+        height: 100%;
+    }
+}

@@ -2,27 +2,34 @@
 
 {% block title %}Choisir une musique{% endblock %}
 
-{% block body %}
-    <h1>Choisir une musique</h1>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/choose.css') }}">
+{% endblock %}
 
-    <form method="get" action="{{ path('choose_music',  { participantId: participant.id }) }}">
-        <input type="text" name="query" value="{{ query|default('') }}" placeholder="Rechercher une musique">
-        <button type="submit">Rechercher</button>
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Choisir une musique</h1>
+    </div>
+
+    <form method="get" action="{{ path('choose_music',  { participantId: participant.id }) }}" class="form">
+        <input type="text" name="query" value="{{ query|default('') }}" placeholder="Rechercher une musique" class="inputMusique">
+        <button type="submit" class="boutonEnregistrer">Rechercher</button>
     </form>
 
-    <ul>
-            {% for track in tracks %}
-                <li>
-                    <img src="{{ track.album.images[0].url }}" alt="Album cover" width="50">
-                    {{ track.name }} - {{ track.artists[0].name }}
-                    <a href="{{ path('submit_music', { trackId: track.id, participantId: participant.id }) }}">
-                        Choisir cette musique
-                    </a>
-                </li>
-            {% else %}
-                <li>Aucun résultat trouvé</li>
-            {% endfor %}
-    </ul>
+    <div class="resultSpotify">
+    {% for track in tracks %}
+        <div class="card">
+            <img src="{{ track.album.images[0].url }}" alt="Album cover" class="album-cover">
+            <p class="track-info">{{ track.name }} - {{ track.artists[0].name }}</p>
+            <a href="{{ path('submit_music', { trackId: track.id, participantId: participant.id }) }}" class="choose-button">
+                Choisir cette musique
+            </a>
+        </div>
+    {% else %}
+        <p>Aucun résultat trouvé</p>
+    {% endfor %}
+</div>
 {% endblock %}
 
 

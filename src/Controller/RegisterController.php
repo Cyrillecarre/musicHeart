@@ -12,6 +12,7 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use App\Security\AppAuthenticator;
 use App\Entity\Admin;
 use App\Form\RegisterType;
+use App\Entity\Game;
 
 class RegisterController extends AbstractController
 {
@@ -32,6 +33,19 @@ class RegisterController extends AbstractController
                     'registrationForm' => $form,
                 ]);
             }
+
+            $existingAdmin = $entityManager->getRepository(Admin::class)->findOneBy(['email' => $user->getEmail()]);
+            if ($existingAdmin) {
+                $activeGame = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $existingAdmin]);
+
+                if ($activeGame) {
+                    return $this->render('register/index.html.twig', [
+                        'registrationForm' => $form->createView(),
+                        'activeGame' => $activeGame,
+                    ]);
+                }
+            }
+
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,

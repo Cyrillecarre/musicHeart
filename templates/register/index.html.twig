@@ -11,24 +11,36 @@
         <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
         <h1 class="titre">Vous êtes l'administrateur du jeu.</h1>
     </div>
-    <div class="procedure">
-        <h2>Procédure :</h2>
-        <ul>
-            <li>Vous enregistrez vos identifiants pour le jeu.</li>
-            <li>Vous enregistrez le patient.</li>
-            <li>Vous distribuez le lien au personne que vous souhaitez inclure pour participer.</li>
-        </ul>
-    </div>
-    <div class="form">
-        {{ form_errors(registrationForm) }}
+    
+    {% if activeGame is defined %}
+        <div class="game-detail" onclick="window.location.href='{{ path('app_paiement', {adminId: activeGame.admin.id}) }}'">
+            <h2>Partie en cours</h2>
+            <p><strong>Patient :</strong> {{ activeGame.admin.name }}</p>
+            <p><strong>Date de fin de participation :</strong> {{ activeGame.endDate|date('d/m/Y H:i') }}</p>
+            <p><strong>Date de fin du jeu :</strong> {{ activeGame.resultDate|date('d/m/Y H:i') }}</p>
+            <button class="boutonEnregistrer">Voir les détails</button>
+        </div>
+    {% else %}
+        <div class="procedure">
+            <h2>Procédure :</h2>
+            <ul>
+                <li>Vous enregistrez vos identifiants pour le jeu.</li>
+                <li>Vous enregistrez le patient.</li>
+                <li>Vous distribuez le lien aux personnes que vous souhaitez inclure pour participer.</li>
+            </ul>
+        </div>
+        
+        <div class="form">
+            {{ form_errors(registrationForm) }}
 
-        {{ form_start(registrationForm, {'attr':{'class': 'formStart'}}) }}
-            {{ form_row(registrationForm.name, {'label': 'Nom, prénom', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
-            {{ form_row(registrationForm.email, {'label': 'Email', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
-            {{ form_row(registrationForm.plainPassword, {'label': 'Mot de passe', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
-            {{ form_row(registrationForm.confirmPassword, {'label': 'Confirmer le mot de passe', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
-            {{ form_row(registrationForm.agreeTerms, {'label': 'Je valide les conditions générales', 'attr': {'class': 'form-check-input'}, 'label_attr': {'class': 'form-label'}}) }}
-            <button type="submit" class="boutonEnregistrer">Enregistrer</button>
-        {{ form_end(registrationForm) }}
-    </div>
+            {{ form_start(registrationForm, {'attr':{'class': 'formStart', 'data-turbo': 'false'}}) }}
+                {{ form_row(registrationForm.name, {'label': 'Nom, prénom', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+                {{ form_row(registrationForm.email, {'label': 'Email', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+                {{ form_row(registrationForm.plainPassword, {'label': 'Mot de passe', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+                {{ form_row(registrationForm.confirmPassword, {'label': 'Confirmer le mot de passe', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+                {{ form_row(registrationForm.agreeTerms, {'label': 'Je valide les conditions générales', 'attr': {'class': 'form-check-input'}, 'label_attr': {'class': 'form-label'}}) }}
+                <button type="submit" class="boutonEnregistrer">Enregistrer</button>
+            {{ form_end(registrationForm) }}
+        </div>
+    {% endif %}
 {% endblock %}

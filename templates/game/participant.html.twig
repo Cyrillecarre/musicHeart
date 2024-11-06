@@ -12,7 +12,7 @@
     </div>
     <div class="form">
     {{ form_start(gameForm, {'attr':{'class': 'formStart'}}) }}
-        {{ form_row(gameForm.end_date, {'label': 'horaire de fin de participation', 'attr': {'class': 'form-control datetime-picker'}}) }}
+        {{ form_row(gameForm.end_date, {'label': 'horaire de fin de participation pour les proches', 'attr': {'class': 'form-control datetime-picker'}}) }}
         {{ form_row(gameForm.result_date, {'label': 'horaire de fin de jeu du patient et affichage des résultat', 'attr': {'class': 'form-control datetime-picker'}}) }}
         {% if games is empty %}
             <button type="submit" class="boutonEnregistrer">Enregistrer les horaires</button>
@@ -30,9 +30,11 @@
             {% endfor %}
         </ul>
     </div>
-    <button class="boutonEnregistrer">
-        <a href="{{ path('app_paiement') }}">Message aux participants</a>
-    </button>
+    {% if games is not empty %}
+        <button class="boutonEnregistrer">
+            <a href="{{ path('app_paiement') }}">Message aux participants</a>
+        </button>
+    {% endif %}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

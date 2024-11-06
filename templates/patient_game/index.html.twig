@@ -2,74 +2,200 @@
 
 {% block title %}Jeu d'association{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/patientChoose.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function shuffleElements(containerId) {
+    const container = document.getElementById(containerId);
+    const items = Array.from(container.children);
+
+    items.sort(() => Math.random() - 0.5);
+
+    items.forEach(item => container.appendChild(item));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    shuffleElements('music-container');
+    shuffleElements('participant-container');
+});
+</script>
+{% endblock %}
+
 {% block body %}
-    <h1>Associez les musiques aux participants</h1>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Associez les musiques aux participants</h1>
+    </div>
+    <div class="procedure">
+        <h2>Mode d'emploi :</h2>
+        <p>Associez chaque musique à un participant en cliquant sur la musique puis sur le participant.</p>
+        <p>Une fois toutes les associations faites, cliquez sur le bouton "Résultat" pour voir le score.</p>
+    </div>  
+    <div class="container">
+        <h2 class="titreContainer">Musiques</h2>
+        <h2 class="titreContainer">Message des participants</h2>
+    </div>
+    <div class="gridSelect">
+        <div id="music-container" class="music">
+            {% for music in musicDetails %}
+                <div data-music-id="{{ music.url }}" onclick="selectMusic('{{ music.url }}')" class="cardMusicS music-item">
+                    <iframe class="music-item" src="{{ music.url | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="pointer-events: none"></iframe>
+                </div>
+            {% endfor %}
+        </div>
 
-    <div id="music-container">
-        {% for music in musicDetails %}
-            <div class="music-item" data-music-id="{{ music.url }}" onclick="selectMusic('{{ music.url }}')" style="border: 1px solid #ddd; padding: 10px; margin: 10px; cursor: pointer;">
-                <iframe src="{{ music.url | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
-                <p>Nom de la musique : {{ music.name }}</p>
-            </div>
-        {% endfor %}
+        <div id="participant-container" class="music">
+            {% for participation in participations %}
+                <div data-participant-id="{{ participation.participant.id }}" onclick="associateParticipant('{{ participation.participant.id }}')" class="cardMusic participant-item">
+                    <p><strong>{{ participation.participant.name }} : </strong><br>{{ participation.getSupportText() }}</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
-    <h2>Participants</h2>
-    <div id="participant-container">
-        {% for participation in participations %}
-            <div class="participant-item" data-participant-id="{{ participation.participant.id }}" onclick="associateParticipant('{{ participation.participant.id }}')" style="border: 1px solid #ddd; padding: 10px; margin: 10px; cursor: pointer;">
-                <p>Participant : {{ participation.participant.name }}</p>
-                <p>Message de soutien : {{ participation.getSupportText() }}</p>
-            </div>
-        {% endfor %}
+    <button onclick="submitAssociations()" class="boutonEnregistrer">Résultat</button>
+    <div id="result-container">
+        <p id="score-text" class="score"></p>
+        <button id="show-correct-answers" onclick="goToResults()" style="display: none;" class="boutonEnregistrer2">Afficher les bonnes réponses</button>
     </div>
 
-    <button onclick="submitAssociations()">Soumettre</button>
 
-    <script>
-    let selectedMusic = null;
-    let associations = {};
+<script>
+let selectedMusic = null;
+let associations = {};
+const musicColors = generateRandomColors({{ musicDetails|length }});
 
-    function selectMusic(musicId) {
-        selectedMusic = musicId;
-        document.querySelectorAll('.music-item').forEach(item => item.style.backgroundColor = '');
-        document.querySelector(`[data-music-id="${musicId}"]`).style.backgroundColor = '#f0f8ff';
-        alert('Musique sélectionnée');
+function generateRandomColors(count) {
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+        colors.push(`hsl(${Math.floor(Math.random() * 360)}, 100%, 75%)`);
     }
+    return colors;
+}
 
-    function associateParticipant(participantId) {
-        if (selectedMusic) {
-            associations[selectedMusic] = participantId;
-            alert('Association enregistrée : Musique ' + selectedMusic + ' -> Participant ' + participantId);
-            selectedMusic = null;
-            document.querySelectorAll('.music-item').forEach(item => item.style.backgroundColor = '');
-        } else {
-            alert('Sélectionnez d\'abord une musique.');
+function getColorForMusic(musicId) {
+    const musicIndex = Array.from(document.querySelectorAll('.cardMusicS')).findIndex(item => item.getAttribute('data-music-id') === musicId);
+    return musicColors[musicIndex];
+}
+
+function selectMusic(musicId) {
+    selectedMusic = musicId;
+
+    document.querySelectorAll('.cardMusicS').forEach(item => {
+        if (!associations[item.getAttribute('data-music-id')]) {
+            item.style.border = '';
         }
-    }
+    });
 
-    function submitAssociations() {
-        fetch("{{ path('submit_association') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token("submit") }}'
-            },
-            body: JSON.stringify({ associations })
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Parcourez les résultats et appliquez les bordures
-            for (const [musicId, isCorrect] of Object.entries(data.results)) {
-                const musicElement = document.querySelector(`[data-music-id="${musicId}"]`);
-                if (isCorrect) {
-                    musicElement.style.border = '3px solid green';
-                } else {
-                    musicElement.style.border = '3px solid red';
-                }
-            }
-        });
+    const selectedElement = document.querySelector(`[data-music-id="${musicId}"]`);
+    selectedElement.style.border = `4px solid ${getColorForMusic(musicId)}`;
+}
+
+function associateParticipant(participantId) {
+    if (selectedMusic) {
+        const color = getColorForMusic(selectedMusic);
+
+        if (associations[selectedMusic]?.participantId === participantId) {
+            delete associations[selectedMusic];
+            document.querySelector(`[data-participant-id="${participantId}"]`).style.border = '';
+            document.querySelector(`[data-music-id="${selectedMusic}"]`).style.border = '';
+        } else {
+            associations[selectedMusic] = { participantId, color };
+
+            document.querySelector(`[data-music-id="${selectedMusic}"]`).style.border = `4px solid ${color}`;
+            document.querySelector(`[data-participant-id="${participantId}"]`).style.border = `4px solid ${color}`;
+
+            moveToTop('music-container', selectedMusic, 'data-music-id');
+            moveToTop('participant-container', participantId, 'data-participant-id');
+        }
+
+        selectedMusic = null;
+    } else {
+        alert('Sélectionnez d\'abord une musique.');
     }
+}
+
+function moveToTop(containerId, itemId, dataAttribute) {
+    const container = document.getElementById(containerId);
+    const item = container.querySelector(`[${dataAttribute}="${itemId}"]`);
+    container.prepend(item);
+}
+
+function submitAssociations() {
+    fetch("{{ path('submit_association') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token("submit") }}'
+        },
+        body: JSON.stringify({ associations })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        let correctCount = 0;
+
+        for (const [musicId, isCorrect] of Object.entries(data.results)) {
+            const musicElement = document.querySelector(`[data-music-id="${musicId}"]`);
+            if (isCorrect) {
+                musicElement.style.border = '4px solid green';
+                correctCount++;
+            } else {
+                musicElement.style.border = '4px solid red';
+            }
+        }
+
+
+        document.getElementById('score-text').innerText = `Nombre de bonnes réponses : ${correctCount}`;
+        document.getElementById('show-correct-answers').style.display = 'flex';
+        document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+        sendEmailResults(participantId);
+    })
+    .catch(error => console.error('Erreur du serveur:', error));
+}
+
+function goToResults() {
+    window.location.href = "{{ path('patient_game_result') }}";
+}
+
+function moveToTop(containerId, itemId, dataAttribute) {
+    const container = document.getElementById(containerId);
+    const item = container.querySelector(`[${dataAttribute}="${itemId}"]`);
+
+    item.classList.add('move-to-top');
+
+    setTimeout(() => {
+        container.prepend(item);
+        item.classList.remove('move-to-top');
+        item.classList.add('moved'); 
+    }, 500);
+}
+
+function sendEmailResults(participantId) {
+    fetch(`/send-results/${participantId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token("send_results") }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Email envoyé avec succès.');
+        } else {
+            console.log('Erreur lors de l\'envoi de l\'email :', data.message);
+        }
+    })
+    .catch(error => console.error('Erreur lors de l\'envoi de l\'email:', error));
+}
 </script>
 
 {% endblock %}

@@ -1,8 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello StartGameController!{% endblock %}
+{% block title %}Text soutient{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/choose.css') }}">
+{% endblock %}
 
 {% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Confirmer votre choix</h1>
+    </div>
 
 <h1>Confirmer votre choix</h1>
 

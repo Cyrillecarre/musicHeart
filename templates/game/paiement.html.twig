@@ -21,20 +21,50 @@
     </div>
 
     <h2 class="titre2">Merci pour votre achat !</h2>
-    <div class="paiement">
-        <label for="prewrittenMessage">Message à envoyer aux participants :</label>
-        <textarea id="prewrittenMessage" rows="4" cols="50" readonly>
-            Bonjour,
-            
-            Vous êtes invité à participer à notre jeu pour aider {{ patient.name }} à passer ce douloureux moment.
-            La date limite pour jouer est le {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} et les résultats seront affichés le {{ game.resultDate ? game.resultDate|date('d/m/Y H:i') : 'N/A' }}.
-            Cliquez sur le lien suivant pour accéder à votre espace privé et participer : {{ participantLink }}
+    <div class="message">
+        <label for="prewrittenMessage">Message à envoyer au patient :</label>
+        
+<textarea id="prewrittenMessage" rows="14" cols="90" readonly class="textArea">
+                Bonjour,
+
+{{ admin.name }} à organiser un jeu pour vous ! 
+
+Vous êtes invité à participer à Music Heart pour surmonter ce douloureux moment.
+
+La date pour commencer à jouer est le {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} 
+et la date maximum pour jouer est le {{ game.resultDate ? game.resultDate|date('d/m/Y H:i') : 'N/A' }}.
+
+Lien pour participer : 
+{{ patientLink }}
 
             Merci de votre participation !
         </textarea>
-        <button onclick="copyMessage()">Copier le message</button>
+        <div class="buttonSend">
+            <button onclick="sendSms()" class="boutonEnregistrer">Envoyer le SMS à {{ patient.name }}</button>
+            <p>ou</p>
+            <button onclick="copyMessage()" class="boutonEnregistrer">Copier le message et envoyer sur un autre canal</button>
+        </div>
     </div>
-<p>Vous pouvez aussi copier le lien suivant pour l'envoyer à vos participants en sms ou email et ils auront accés au jeu:</p>
+
+    <div class="message">
+        <label for="prewrittenMessage">Message à envoyer aux participants :</label>
+
+<textarea id="prewrittenMessage2" rows="14" cols="90" readonly>
+            Bonjour,
+
+Vous êtes invité à participer à notre jeu Music Heart organisé par {{ admin.name }} 
+Pour aider {{ patient.name }} à passer ce douloureux moment.
+
+La date limite pour jouer est le {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} 
+Les résultats seront affichés le {{ game.resultDate ? game.resultDate|date('d/m/Y H:i') : 'N/A' }}.
+            
+Lien pour les participants : 
+{{ participantLink }}
+
+            Merci de votre participation !
+</textarea>
+        <button onclick="copyMessage()" class="boutonEnregistrer">Copier le message et envoyez au participants par sms ou autre</button>
+    </div>
 
 <script>
 
@@ -45,5 +75,29 @@ function copyMessage() {
     alert("Message copié !");
 }
 </script>
+<script>
+        function sendSms() {
+            const numero = "{{ patient.phone }}";
+            const message = document.getElementById('prewrittenMessage').value;
+
+            fetch('/envoyer-sms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ numero, message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('SMS envoyé avec succès');
+                } else {
+                    alert('Erreur : ' + data.error);
+                }
+            })
+            .catch(error => console.error('Erreur :', error));
+        }
+    </script>
 
 {% endblock %}

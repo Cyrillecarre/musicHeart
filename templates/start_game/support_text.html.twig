@@ -2,11 +2,18 @@
 
 {% block title %}Ajouter un texte de soutien{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/choose.css') }}">
+{% endblock %}
+
 {% block body %}
-    <h1>Ajouter un texte de soutien</h1>
-    <form method="post" action="{{ path('submit_music', { 'trackId': trackId, 'participantId': participant.id }) }}">
-        <label for="support_text">Texte de soutien (facultatif) :</label>
-        <textarea name="support_text" id="support_text" rows="4" cols="50"></textarea>
-        <button type="submit">Soumettre</button>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Ajouter un texte de soutien</h1>
+    </div>
+    <form method="post" action="{{ path('submit_music', { 'trackId': trackId, 'participantId': participant.id }) }}" class="form">
+        <label for="support_text" class="labelSupport">Texte de soutien (facultatif) :</label>
+        <textarea name="support_text" id="support_text" rows="10" cols="50" class="textArea"></textarea>
+        <button type="submit" class="boutonEnregistrer">Soumettre</button>
     </form>
 {% endblock %}

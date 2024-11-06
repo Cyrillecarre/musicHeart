@@ -1,13 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ParticipantController!{% endblock %}
+{% block title %}Participant{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/register.css') }}">
+{% endblock %}
 
 {% block body %}
-    <h1>Bienvenu, merci de participer </h1>
-    <p>Welcome to your new controller!</p>
-    {{ form_start(participantForm) }}
-        {{ form_row(participantForm.name, {'label': 'Nom, prenom'}) }}
-        {{ form_row(participantForm.email, {'label': 'email pour recevoir les résultats'}) }}
-        <button type="submit" class="btn">S'enregistrer</button>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Bienvenu, merci de participer</h1>
+    </div>
+    <div class="form">
+        {{ form_errors(participantForm) }}
+    {{ form_start(participantForm, {'attr':{'class': 'formStart'}}) }}
+        {{ form_row(participantForm.name, {'label': 'Nom, prenom', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+        {{ form_row(participantForm.email, {'label': 'email pour recevoir les résultats', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+        <button type="submit" class="boutonEnregistrer">S'enregistrer</button>
     {{ form_end(participantForm) }}
+    </div>
 {% endblock %}

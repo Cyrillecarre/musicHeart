@@ -1,7 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter un texte de soutien{% endblock %}
+{% block title %}Merci{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/choose.css') }}">
+{% endblock %}
 
 {% block body %}
-    <h1>Merci de votre participation</h1>
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Merci de votre participation</h1>
+    </div>
+    <p class="merci">Vous pouvez quitter l'application, les résultats seront envoyé par mail.<br><br>Bonne Journée</p>
 {% endblock %}

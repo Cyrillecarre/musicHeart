@@ -14,7 +14,7 @@
 <button class="boutonEnregistrer"><a href="{{ path('app_register') }}">S'enregistrer pour commencer une partie</a></button>
 <div class="descriptif">
     <div class="descriptifContent">
-        <h2>Comment jouer ?</h2>
+        <h2>Quel est le but ?</h2>
         <p>Le but du jeu est de retrouver qui a publié la musique.
         </p>
         <p>Les bienfait de la musique sur le moral et la santé ne sont plus à prouver.
@@ -27,11 +27,105 @@
         </p>
     </div>
     <div class="descriptifContent">
-        <img class="imagePatient" src="{{ asset('images/patient.png') }}" alt="patient" class="img">
+        <img class="imagePatient" src="{{ asset('images/groupeAccueil.jpg') }}" alt="patient" class="img">
     </div>
 </div>
-{% endblock %}
+<div>
+    <h2 class="titre2 fade-in">Comment cela ce déroule?</h2>
+    <div class="deroulement fade-in">
+        <h3 class="titre3 fade-in">L'organisateur</h3>
+        <div class="deroulementContent fade-in">
+            <div>
+                <img class="imagePatient" src="{{ asset('images/adminCasque.jpg') }}" alt="organisateur" class="img">
+            </div>
+            <div>
+                <li> 1 <span class="span">&#127899;</span> Je m'enregistre comme administrateur du jeu</li>
+                <li> 2 <span class="span">&#127932;</span> Je crée une partie</li>
+                <li> 3 <span class="span">&#127930;</span> Je défini l'horaire de fin de jeu pour les proches</li>
+                <li> 4 <span class="span">&#127926;</span> Je défini l'horaire de fin de jeu pour le patient</li>
+                <li> 5 <span class="span">&#127929;</span> Je défini le nombre de participants</li>
+                <li> 6 <span class="span">&#127911;</span> Je distribue l'adresse de connexion fournis à mes proches</li>
+                <br>
+                <p id="waveText">C'est fini pour l'administrateur, place au jeu</p>
+            </div>
+        </div>
+        <hr>
+        <h3 class="titre3 fade-in">Les proches</h3>
+        <div class="deroulementContent fade-in">
+            <div>
+                <li> 1 <span class="span">&#127908;</span> Je me connecte à l'adresse fournis</li>
+                <li> 2 <span class="span">&#127927;</span> J'enregistre mon Nom Prénom et adresse mail</li>
+                <li> 3 <span class="span">&#127928;</span> Je choisi une musique</li>
+                <li> 4 <span class="span">&#129345;</span> Je choisi un message de soutient</li>
+                <br>
+                <p id="waveText2">C'est fini pour le joueur, place au patient</p>
+            </div>
+            <div>
+                <img class="imagePatient" src="{{ asset('images/patient2Casque.jpg') }}" alt="proche" class="img">
+            </div>
+        </div>
+        <hr>
+        <h3 class="titre3 fade-in">Le patient</h3>
+        <div class="deroulementContent fade-in">
+            <div>
+                <img class="imagePatient" src="{{ asset('images/patientProche.jpg') }}" alt="patient" class="img">
+            </div>
+            <div>
+                <li> 1 <span class="span">&#128266;</span> Je me connecte à l'adresse fournis</li>
+                <li> 2 <span class="span">&#128239;</span> Je selectionne une musique</li>
+                <li> 3 <span class="span">&#127898;</span> Je selectionne le message de soutient associé</li>
+                <li> 4 <span class="span">&#127897;</span> Je valide</li>
+                <li> 5 <span class="span">&#128251;</span> Le nombre de bonne réponse et la selection effectué est envoyé au proches</li>
+                <br>
+                <p id="waveText3">Le mauvais moment est déjà fini !? Evidemment, ce changer les idées avec des musiques et des messages qui viennent du coeur font de ce moment de solitude une agréable journée.</p>
+            </div>
+        </div>
+    </div>
+    <button class="boutonEnregistrer"><a href="{{ path('app_register') }}">S'enregistrer pour commencer une partie</a></button>
+</div>
+<div>
+    {{ include('footer.html.twig') }}
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    ['waveText', 'waveText2', 'waveText3'].forEach(id => {
+        const textElement = document.getElementById(id);
+        const words = textElement.innerText.split(" ");
+        textElement.innerHTML = "";
+        
+        words.forEach((word, wordIndex) => {
+            const wordSpan = document.createElement("span");
+            wordSpan.style.display = "inline-block";
+            
+            Array.from(word).forEach((letter, letterIndex) => {
+                const letterSpan = document.createElement("span");
+                letterSpan.innerHTML = letter;
+                letterSpan.style.animationDelay = `${(wordIndex + letterIndex) * 0.1}s`; // Décale chaque lettre
+                wordSpan.appendChild(letterSpan);
+            });
+            
+            textElement.appendChild(wordSpan);
+            textElement.appendChild(document.createTextNode(" ")); // Ajoute un espace après chaque mot
+        });
+    });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    const faders = document.querySelectorAll(".fade-in");
 
-{% block javascripts %}
-    <script src="{{ asset('scripts/home.js') }}"></script>
+    const appearOnScroll = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("show");
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    faders.forEach(fader => {
+        appearOnScroll.observe(fader);
+    });
+});
+</script>
 {% endblock %}

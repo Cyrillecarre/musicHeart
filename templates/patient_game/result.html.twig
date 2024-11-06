@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Jeu d'association{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/patientChoose.css') }}">
+{% endblock %}
+
+{% block javascripts %} 
+{% endblock %}
+
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Résultat: musiques et participants</h1>
+    </div>
+    <div class="results">
+        {% for participation in participations %}
+            <div class="result-item">
+                <p><strong>Participant:&nbsp;</strong>{{ participation.participant.name }}</p>
+                <p><strong>Texte:&nbsp;</strong>{{ participation.getSupportText() }}</p>
+                <p><iframe src="{{ participation.getMusicUrl() | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

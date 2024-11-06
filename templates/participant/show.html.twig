@@ -2,12 +2,21 @@
 
 {% block title %}Fiche de {{ participant.name }}{% endblock %}
 
-{% block body %}
-    <h1>Fiche du joueur</h1>
-    <p><strong>Nom :</strong> {{ participant.name }}</p>
-    <p><strong>Email :</strong> {{ participant.email }}</p>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/participant.css') }}">
+{% endblock %}
 
-    <h2>Vous êtes prêt à jouer ?</h2>
-    <a href="{{ path('app_start_game', {'participantId': participant.id}) }}" class="btn btn-primary">Jouer</a>
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Merci {{ participant.name }} de participer</h1>
+    </div>
+    <div class="joueur">
+        <p><strong>Nom :</strong> {{ participant.name }}</p>
+        <p><strong>Email :</strong> {{ participant.email }}</p>
+    </div>
+
+    <h2 class="titre">Vous êtes prêt à jouer ?</h2>
+    <a href="{{ path('app_start_game', {'participantId': participant.id}) }}" class="boutonEnregistrer">Jouer</a>
 
 {% endblock %}

@@ -18,9 +18,61 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GameController extends AbstractController
 {
+
+    private $httpClient;
+
+    public function __construct(HttpClientInterface $httpClient)
+    {
+        $this->httpClient = $httpClient;
+    }
+
+    #[Route('/envoyer-sms', name: 'send_sms', methods: ['POST'])]
+    public function envoyerSms(Request $request, MailerInterface $mailer): JsonResponse
+    {
+        $numero = $request->request->get('numero');
+        $message = $request->request->get('message');
+        $apiKey = $_ENV['NUMVERIFY_API_KEY'];
+
+        // Appel à l'API NumVerify
+        $response = $this->httpClient->request('GET', "http://apilayer.net/api/validate?access_key=$apiKey&number=$numero&country_code=FR&format=1");
+
+        $data = $response->toArray();
+
+        if (!$data['valid']) {
+            return new JsonResponse(['error' => 'Numéro invalide'], 400);
+        }
+
+        $operatorEmailDomains = [
+            'Bouygues Telecom' => 'mms.bouyguestelecom.fr',
+            'SFR' => 'sfr.fr',
+            'Orange' => 'sms.orange.fr',
+            'Free Mobile' => 'sms.free.fr'
+        ];
+
+        $operator = $data['carrier'] ?? '';
+        $operatorEmailDomain = $operatorEmailDomains[$operator] ?? null;
+
+        if (!$operatorEmailDomain) {
+            return new JsonResponse(['error' => 'Opérateur non pris en charge'], 400);
+        }
+
+        $emailToSms = $numero . '@' . $operatorEmailDomain;
+
+        $email = (new Email())
+            ->from('votre_email@example.com')
+            ->to($emailToSms)
+            ->subject('')
+            ->text($message);
+
+        $mailer->send($email);
+
+        return new JsonResponse(['success' => 'SMS envoyé avec succès']);
+    }
+
     #[Route('/game', name: 'app_game')]
     public function index(): Response
     {
@@ -59,7 +111,7 @@ class GameController extends AbstractController
     public function createParticipant(Request $request, EntityManagerInterface $entityManager): Response
     {
         $participants = $entityManager->getRepository(Participant::class)->findAll();
-
+        $participant = new Participant();
         $game = new Game();
         $gameForm = $this->createForm(GameType::class, $game);
         $gameForm->handleRequest($request);
@@ -67,6 +119,7 @@ class GameController extends AbstractController
         if ($gameForm->isSubmitted() && $gameForm->isValid()) {
             $admin = $this->getUser();
             $game->setAdmin($admin);
+            $participant->setRoles(['ROLE_USER']);
 
             $entityManager->persist($game);
             $entityManager->flush();
@@ -80,7 +133,6 @@ class GameController extends AbstractController
             'participants' => $participants,
             'gameForm' => $gameForm->createView(),
             'games' => $games,
-
         ]);
     }
 
@@ -90,6 +142,7 @@ class GameController extends AbstractController
         /** @var Admin $admin */
         $admin = $this->getUser();
         $patients = $admin->getPatients();
+        $admin = $entityManager->getRepository(Admin::class)->findOneBy(['id' => $admin->getId()]);
 
         if ($patients->isEmpty()) {
             throw $this->createNotFoundException('Aucun patient trouvé.');
@@ -100,22 +153,25 @@ class GameController extends AbstractController
         if (!$patient || !$patient->getName()) {
             throw $this->createNotFoundException('Patient sans nom trouvé.');
         }
-    
+
         $game = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $admin]);
-    
+
         if (!$game) {
             throw $this->createNotFoundException('Aucun jeu trouvé.');
         }
 
-        $participantToken = Uuid::v4();
-        $participantLink = $urlGenerator->generate('add_participant', ['token' => $participantToken], UrlGeneratorInterface::ABSOLUTE_URL);
+        $patientToken = Uuid::v4();
+        $patientLink = $urlGenerator->generate('patient_game_login', ['token' => $patientToken], UrlGeneratorInterface::ABSOLUTE_URL);
 
-    
+        $participantToken = Uuid::v4();
+        $participantLink = $urlGenerator->generate('add_participant', ['token' => $participantToken,'adminId' => $admin->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
         return $this->render('game/paiement.html.twig', [
+            'patientLink' => $patientLink,
             'participantLink' => $participantLink,
             'game' => $game,
             'patient' => $patient,
+            'admin' => $admin,
         ]);
     }
-
 }    

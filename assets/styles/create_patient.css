@@ -5,9 +5,11 @@
 }
 
 body {
-    background: linear-gradient(105deg, #A2D2E6 25%, #B2E5DA 50%, #D3C6E8 75%);
-    background-size: 200% 200%;
+    background: linear-gradient(105deg, #A2D2E6, #B2E5DA, #D3C6E8);
+    background-size: 100% 100%; /* Applique le dégradé sur toute la largeur et la hauteur */
     font-family: 'Roboto', sans-serif;
+    height: auto;
+    margin: 0;
 }
 
 .enteteTitre {
@@ -24,7 +26,6 @@ body {
     left: 10rem;
     width: 250px;
     height: 250px;
-    background-image: url('path/to/logo.png');
     background-size: cover;
     background-position: center;
     -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 0) 100%);

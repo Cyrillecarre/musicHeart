@@ -25,12 +25,32 @@ class Participant
     #[ORM\ManyToOne(inversedBy: 'participants')]
     private ?Patient $patient = null;
 
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
     #[ORM\ManyToOne(inversedBy: 'participant_id')]
     private ?Participation $participation = null;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        if (empty($roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     public function getName(): ?string

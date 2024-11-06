@@ -1,6 +1,4 @@
 <?php
-// SpotifyController.php
-// SpotifyController.php
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -59,12 +57,11 @@ class SpotifyController extends AbstractController
             $session->set('spotify_refresh_token', $tokenResponse['refresh_token']);
         }
 
-        // Vérifie si l'utilisateur est un administrateur (patient) ou un participant
         if ($this->isGranted('ROLE_ADMIN')) {
-            return $this->redirectToRoute('patient_game_index');
+            $participantId = $session->get('participant_id');
+        return $this->redirectToRoute('choose_music', ['participantId' => $participantId]);
         }
 
-        // Sinon, redirige vers `choose_music` avec `participantId`
         $participantId = $session->get('participant_id');
         return $this->redirectToRoute('choose_music', ['participantId' => $participantId]);
     }
