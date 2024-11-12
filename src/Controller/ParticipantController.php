@@ -11,6 +11,8 @@ use App\Entity\Participant;
 use App\Form\ParticipantType;
 use App\Entity\Admin;
 use App\Entity\AccessToken;
+use App\Entity\Participation;
+
 
 class ParticipantController extends AbstractController
 {
@@ -32,36 +34,42 @@ class ParticipantController extends AbstractController
         if (!$admin) {
             throw $this->createNotFoundException('Admin non trouvé.');
         }
-    
-        // Vérifier le token d'accès
+
         $accessToken = $entityManager->getRepository(AccessToken::class)->findOneBy(['token' => $token]);
         if (!$accessToken) {
             return $this->render('participant/tokenInvalide.html.twig', [
                 'message' => 'Token invalide.',
             ]);
         }
-    
-        // Vérifier la validité du token
+
         $currentDate = new \DateTime();
         if ($currentDate > $accessToken->getExpirationDate()) {
             return $this->render('participant/tokenInvalide.html.twig', [
                 'message' => 'Le token a expiré.',
             ]);
         }
-    
-        // Création du formulaire de participant
+
         $participant = new Participant();
         $participantForm = $this->createForm(ParticipantType::class, $participant);
         $participantForm->handleRequest($request);
-    
-        // Traitement du formulaire
+
+
         if ($participantForm->isSubmitted() && $participantForm->isValid()) {
+            // Vérifier si un participant avec la même adresse e-mail existe déjà
+            $existingParticipant = $entityManager->getRepository(Participant::class)->findOneBy(['email' => $participant->getEmail()]);
+            
+            if ($existingParticipant) {
+                // Redirigez vers la page de mise à jour si le participant existe déjà
+                return $this->redirectToRoute('update_participation', ['participantId' => $existingParticipant->getId()]);
+            }
+    
+            // Enregistrer le nouveau participant
             $participant->setAdmin($admin);
             $participant->setRoles(['ROLE_USER']);
-    
+        
             $entityManager->persist($participant);
             $entityManager->flush();
-    
+        
             return $this->redirectToRoute('show_participant', ['id' => $participant->getId()]);
         }
     
@@ -69,8 +77,6 @@ class ParticipantController extends AbstractController
             'participantForm' => $participantForm->createView(),
         ]);
     }
-    
-    
 
     #[Route('/participant/{id}', name: 'show_participant')]
     public function showParticipant(int $id, EntityManagerInterface $entityManager): Response
@@ -82,6 +88,34 @@ class ParticipantController extends AbstractController
         }
 
         return $this->render('participant/show.html.twig', [
+            'participant' => $participant,
+        ]);
+    }
+
+    #[Route('/update_participation/{participantId}', name: 'update_participation', methods: ['GET', 'POST'])]
+    public function updateParticipation(int $participantId, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $participation = $entityManager->getRepository(Participation::class)->findOneBy(['participant' => $participantId]);
+        $participant = $entityManager->getRepository(Participant::class)->find($participantId);
+        
+        if (!$participation) {
+            throw $this->createNotFoundException('Participation non trouvée.');
+        }
+
+        if ($request->isMethod('POST')) {
+            $musicUrl = $request->request->get('musicUrl');
+            $supportText = $request->request->get('supportText');
+
+            $participation->setMusicUrl($musicUrl);
+            $participation->setSupportText($supportText);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('show_participant', ['id' => $participantId]);
+        }
+
+        return $this->render('participant/update.html.twig', [
+            'participation' => $participation,
             'participant' => $participant,
         ]);
     }

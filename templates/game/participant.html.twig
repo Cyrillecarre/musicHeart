@@ -27,7 +27,9 @@
                 <img class="patientLogo" src="{{ asset('images/patientLogo.png') }}" alt="patientLogo">
                 <li class="patientName">{{ game.endDate|date('d/m/Y H:i') }}</li>
                 <li class="patientPhone">{{ game.resultDate|date('d/m/Y H:i') }}</li>
-                 <a href="{{ path('edit_game', { id: game.id }) }}" class="boutonModifier">Modifier les horaires</a>
+                <button class="boutonEnregistrer2">
+                    <a href="{{ path('edit_game', { id: game.id }) }}">Modifier les horaires</a>
+                </button>
             </div>
             {% endfor %}
         </ul>

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Jeu d'association{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/patientChoose.css') }}">
+{% endblock %}
+
+{% block javascripts %} 
+{% endblock %}
+
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Le Jeu n'est pas encore disponible pour vous, Laissez vos proches initier le jeu.</h1>
+        <p> {{ game.endDate ? game.endDate|date('d/m/Y H:i') : 'N/A' }} </p>
+    </div>
+
+{% endblock %}

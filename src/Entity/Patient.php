@@ -18,8 +18,8 @@ class Patient
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $phone = null;
+    #[ORM\Column(length: 255, unique: true)]  // Ajout de l'unicité si besoin
+    private ?string $email = null;  // Modification ici pour l'email
 
     #[ORM\ManyToOne(inversedBy: 'patients')]
     #[ORM\JoinColumn(nullable: false)]
@@ -53,14 +53,14 @@ class Patient
         return $this;
     }
 
-    public function getPhone(): ?string
+    public function getEmail(): ?string  // Remplacer phone par email
     {
-        return $this->phone;
+        return $this->email;
     }
 
-    public function setPhone(string $phone): static
+    public function setEmail(string $email): static  // Remplacer phone par email
     {
-        $this->phone = $phone;
+        $this->email = $email;
 
         return $this;
     }
@@ -98,7 +98,6 @@ class Patient
     public function removeParticipant(Participant $participant): static
     {
         if ($this->participants->removeElement($participant)) {
-            // set the owning side to null (unless already changed)
             if ($participant->getPatient() === $this) {
                 $participant->setPatientid(null);
             }
@@ -107,3 +106,4 @@ class Patient
         return $this;
     }
 }
+

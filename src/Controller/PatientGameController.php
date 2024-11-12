@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Participant;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use App\Entity\Game;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PatientGameController extends AbstractController
 {
@@ -36,9 +38,16 @@ class PatientGameController extends AbstractController
     #[Route('/patient_game', name: 'patient_game_index')]
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $admin = $this->getUser();
+        $game = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $admin]);
+    
+        if (!$game) {
+            throw $this->createNotFoundException('Jeu non trouvé.');
+        }
+    
         $participations = $entityManager->getRepository(Participation::class)->findAll();
         $musicDetails = [];
-
+    
         foreach ($participations as $participation) {
             $url = $participation->getMusicUrl();
             $musicData = $this->fetchSpotifyMusicDetails($url, $request);
@@ -53,10 +62,14 @@ class PatientGameController extends AbstractController
                 ];
             }
         }
-
+        
+        $currentDate = new \DateTime();
+    
         return $this->render('patient_game/index.html.twig', [
             'musicDetails' => $musicDetails,
             'participations' => $participations,
+            'game' => $game,
+            'currentDate' => $currentDate,
         ]);
     }
 

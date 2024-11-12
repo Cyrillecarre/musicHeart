@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}paiement{% endblock %}
+{% block title %}Message au participants{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('styles/paiement.css') }}">
@@ -9,20 +9,13 @@
 {% block body %}
     <div class="enteteTitre">
         <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
-        <h1 class="titre">Page de paiement</h1>
+        <h1 class="titre">Message aux Participants</h1>
     </div>
-
-    <h2 class="titre2">Selectionnez votre mode de jeu :</h2>
-
-    <div class="paiement">
-        <button class="boutonEnregistrer">2 à 5 personnes : <br>FREE</button>
-        <button class="boutonEnregistrer">6 à 10 personnes : <br>0,99€</button>
-        <button class="boutonEnregistrer">11 personnes et plus : <br>1,99€</button>
-    </div>
-
-    <h2 class="titre2">Merci pour votre achat !</h2>
     <div class="message">
         <label for="prewrittenMessage">Message à envoyer au patient :</label>
+        <p>Envoyer le message par mail à {{ patient.name }} à l'adresse: {{ patient.email }}</p>
+        <div id="resultDisplay"></div>
+
         
 <textarea id="prewrittenMessage" rows="14" cols="90" readonly class="textArea">
                 Bonjour,
@@ -40,9 +33,9 @@ Lien pour participer :
             Merci de votre participation !
         </textarea>
         <div class="buttonSend">
-            <button onclick="sendSms()" class="boutonEnregistrer">Envoyer le SMS à {{ patient.name }}</button>
+            <button onclick="envoyerEmail()" class="boutonEnregistrer">Envoyer le mail à {{ patient.name }}</button>
             <p>ou</p>
-            <button onclick="copyMessage()" class="boutonEnregistrer">Copier le message et envoyer sur un autre canal</button>
+            <button onclick="copyMessage()" class="boutonEnregistrer">Cliquer pour copier et envoyer sur un autre canal</button>
         </div>
     </div>
 
@@ -63,41 +56,36 @@ Lien pour les participants :
 
             Merci de votre participation !
 </textarea>
-        <button onclick="copyMessage()" class="boutonEnregistrer">Copier le message et envoyez au participants par sms ou autre</button>
+        <button onclick="copyMessage()" class="boutonEnregistrer">Cliquer pour copier le message, envoyez le par sms</button>
+    </div>
+    <div class="messageBas">
+        <p>Ils vous reste plus qu'à partager à tout vos proches et de profiter du jeu</p>
     </div>
 
-<script>
+<script defer>
+function envoyerEmail() {
+    const adresseEmail = "{{ patient.email|e('js') }}";
+    const message = document.getElementById('prewrittenMessage').value;
 
-function copyMessage() {
-    var copyText = document.getElementById("prewrittenMessage");
-    copyText.select();
-    document.execCommand("copy");
-    alert("Message copié !");
+    fetch('/envoyer-email', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ adresseEmail, message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('resultDisplay').innerHTML = '<p>Email envoyé avec succès</p>';
+        } else {
+            document.getElementById('resultDisplay').innerHTML = `<p>Erreur : ${data.error}</p>`;
+        }
+    })
+    .catch(error => {
+        document.getElementById('resultDisplay').innerHTML = `<p>Une erreur s'est produite : ${error.message}</p>`;
+    });
 }
 </script>
-<script>
-        function sendSms() {
-            const numero = "{{ patient.phone }}";
-            const message = document.getElementById('prewrittenMessage').value;
-
-            fetch('/envoyer-sms', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ numero, message })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('SMS envoyé avec succès');
-                } else {
-                    alert('Erreur : ' + data.error);
-                }
-            })
-            .catch(error => console.error('Erreur :', error));
-        }
-    </script>
-
 {% endblock %}

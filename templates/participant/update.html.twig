@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fiche de {{ participant.name }}{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/participant.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="enteteTitre">
+        <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
+        <h1 class="titre">Merci {{ participant.name }} de participer</h1>
+    </div>
+    
+    <h1 class="titre">Bienvenue {{ participant.name }}, Vous avez déjà participé. Voulez-vous modifier vos réponses?</h1>
+    <div>
+        <iframe class="music-item" src="{{ participation.musicUrl | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="pointer-events: none"></iframe>
+        <p><strong>Votre texte de soutien :</strong> {{ participation.supportText }}</p>
+    </div>
+
+    <h2 class="titre">Modifier votre musique ou texte de soutien</h2>
+    <form action="{{ path('choose_music', { 'participantId': participant.id }) }}" method="get">
+        <button type="submit" class="boutonEnregistrer">Modifier mes réponses</button>
+    </form>
+
+{% endblock %}

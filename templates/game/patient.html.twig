@@ -14,7 +14,7 @@
     <div class="form">
         {{ form_start(patientForm, {'attr':{'class': 'formStart'}}) }}
             {{ form_row(patientForm.name, {'label': 'Nom du patient', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
-            {{ form_row(patientForm.phone, {'label': 'Numéro de téléphone', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
+            {{ form_row(patientForm.email, {'label': 'Adresse mail du patient', 'attr': {'class': 'form-control'}, 'label_attr': {'class': 'form-label'}}) }}
             {% if patients is empty %}
                 <button type="submit" class="boutonEnregistrer">Enregistrer le patient</button>
             {% endif %}
@@ -26,7 +26,7 @@
             <div class="patient">
                 <img class="patientLogo" src="{{ asset('images/patientLogo.png') }}" alt="patientLogo" class="img">
                 <li class="patientName">{{ patient.name }}</li>
-                <li class="patientPhone">{{ patient.phone }}</li>
+                <li class="patientPhone">{{ patient.email }}</li>
             </div>
             {% endfor %}
         </ul>

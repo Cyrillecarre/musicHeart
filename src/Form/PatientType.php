@@ -5,10 +5,10 @@ namespace App\Form;
 use App\Entity\Admin;
 use App\Entity\Patient;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
 class PatientType extends AbstractType
 {
@@ -18,10 +18,10 @@ class PatientType extends AbstractType
         ->add('name', TextType::class, [
             'required' => true,
             'attr' => ['placeholder' => 'Entrez votre nom et prénom']])
-        ->add('phone', TelType::class, [
-            'required' => true,
-            'attr' => ['placeholder' => '0601020304']])
-        ;
+            ->add('email', EmailType::class); [
+                'required' => true,
+                'attr' => ['placeholder' => 'Entrez l\'adresse mail du patient']]
+                ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -138,7 +138,6 @@ class StartGameController extends AbstractController
 
         return $response;
     }
-
     
     #[Route('/submit-music/{trackId}/{participantId}', name: 'submit_music')]
     public function submitMusic(string $trackId, int $participantId, Request $request, EntityManagerInterface $entityManager): Response
@@ -149,20 +148,25 @@ class StartGameController extends AbstractController
             throw $this->createNotFoundException('Participant non trouvé.');
         }
 
-        $game = $entityManager->getRepository(Game::class)->findOneBy([
-            'admin' => $participant->getAdmin()
-        ]);
-    
+        $game = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $participant->getAdmin()]);
+        
         if (!$game) {
             throw $this->createNotFoundException('Aucun jeu trouvé pour ce participant.');
         }
 
+        $participation = $entityManager->getRepository(Participation::class)->findOneBy([
+            'participant' => $participant,
+            'game' => $game
+        ]);
+
+        if (!$participation) {
+            $participation = new Participation();
+            $participation->setGame($game);
+            $participation->setParticipant($participant);
+        }
+
         if ($request->isMethod('POST')) {
             $supportText = $request->request->get('support_text');
-
-            $participation = new Participation();
-            $participation->setGame($game); 
-            $participation->setParticipant($participant);
             $participation->setMusicUrl('https://open.spotify.com/track/' . $trackId);
             $participation->setSupportText($supportText);
 
@@ -176,13 +180,11 @@ class StartGameController extends AbstractController
             'trackId' => $trackId,
             'participant' => $participant,
         ]);
-    }
-
+    } 
     #[Route('/thank-you', name: 'thank_you')]
     public function thankYou(): Response
     {
         return $this->render('start_game/thank_you.html.twig');
     }
-    
 }
 

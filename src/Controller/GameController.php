@@ -31,48 +31,32 @@ class GameController extends AbstractController
         $this->httpClient = $httpClient;
     }
 
-    #[Route('/envoyer-sms', name: 'send_sms', methods: ['POST'])]
-    public function envoyerSms(Request $request, MailerInterface $mailer): JsonResponse
-    {
-        $numero = $request->request->get('numero');
-        $message = $request->request->get('message');
-        $apiKey = $_ENV['NUMVERIFY_API_KEY'];
+   
+#[Route('/envoyer-email', name: 'envoyer_email', methods: ['POST'])]
+public function envoyerEmail(Request $request, MailerInterface $mailer): JsonResponse
+{
+    $data = json_decode($request->getContent(), true);
+    $adresseEmail = $data['adresseEmail'] ?? null;
+    $message = $data['message'] ?? null;
 
-        // Appel à l'API NumVerify
-        $response = $this->httpClient->request('GET', "http://apilayer.net/api/validate?access_key=$apiKey&number=$numero&country_code=FR&format=1");
+    if (!$adresseEmail || !$message) {
+        return new JsonResponse(['error' => 'Adresse email ou message manquant'], 400);
+    }
 
-        $data = $response->toArray();
-
-        if (!$data['valid']) {
-            return new JsonResponse(['error' => 'Numéro invalide'], 400);
-        }
-
-        $operatorEmailDomains = [
-            'Bouygues Telecom' => 'mms.bouyguestelecom.fr',
-            'SFR' => 'sfr.fr',
-            'Orange' => 'sms.orange.fr',
-            'Free Mobile' => 'sms.free.fr'
-        ];
-
-        $operator = $data['carrier'] ?? '';
-        $operatorEmailDomain = $operatorEmailDomains[$operator] ?? null;
-
-        if (!$operatorEmailDomain) {
-            return new JsonResponse(['error' => 'Opérateur non pris en charge'], 400);
-        }
-
-        $emailToSms = $numero . '@' . $operatorEmailDomain;
-
+    try {
         $email = (new Email())
-            ->from('votre_email@example.com')
-            ->to($emailToSms)
-            ->subject('')
+            ->from('contact@ecfsymfony.online')
+            ->to($adresseEmail)
+            ->subject('Invitation à participer à Music Heart')
             ->text($message);
 
         $mailer->send($email);
 
-        return new JsonResponse(['success' => 'SMS envoyé avec succès']);
+        return new JsonResponse(['success' => 'Email envoyé avec succès']);
+    } catch (\Exception $e) {
+        return new JsonResponse(['error' => 'Erreur lors de l\'envoi de l\'email : ' . $e->getMessage()], 500);
     }
+}
 
     #[Route('/game', name: 'app_game')]
     public function index(): Response
@@ -150,7 +134,6 @@ class GameController extends AbstractController
             throw $this->createNotFoundException('Partie non trouvée');
         }
 
-        // Créer un formulaire basé sur le type GameType pour modifier le `Game`
         $gameForm = $this->createForm(GameType::class, $games);
         $gameForm->handleRequest($request);
 
@@ -166,43 +149,36 @@ class GameController extends AbstractController
         ]);
     }
 
-
     
     #[Route('/paiement', name: 'app_paiement')]
     public function paiement(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): Response
     {
-        // Récupération de l'utilisateur actuellement connecté en tant qu'administrateur
         /** @var Admin $admin */
         $admin = $this->getUser();
         $patients = $admin->getPatients();
         $admin = $entityManager->getRepository(Admin::class)->findOneBy(['id' => $admin->getId()]);
     
-        // Vérification de l'existence d'au moins un patient
         if ($patients->isEmpty()) {
             throw $this->createNotFoundException('Aucun patient trouvé.');
         }
-    
-        // Récupération du premier patient
+
         $patient = $patients->first();
     
-        // Vérification que le patient existe et a un nom
         if (!$patient || !$patient->getName()) {
             throw $this->createNotFoundException('Patient sans nom trouvé.');
         }
-    
-        // Récupération de la partie en cours associée à cet administrateur
+
         $game = $entityManager->getRepository(Game::class)->findOneBy(['admin' => $admin]);
     
         if (!$game) {
             throw $this->createNotFoundException('Aucun jeu trouvé.');
         }
     
-        // Génération du token pour le patient et enregistrement dans la base de données
         $patientToken = Uuid::v4();
         $accessTokenPatient = new AccessToken();
         $accessTokenPatient->setToken($patientToken);
         $accessTokenPatient->setAdmin($admin);
-        $accessTokenPatient->setExpirationDate($game->getResultDate()); // Date d'expiration pour le patient
+        $accessTokenPatient->setExpirationDate($game->getResultDate()); 
         $entityManager->persist($accessTokenPatient);
     
         $participantToken = Uuid::v4();
@@ -226,6 +202,5 @@ class GameController extends AbstractController
             'patient' => $patient,
             'admin' => $admin,
         ]);
-    }
-    
+    }   
 }    

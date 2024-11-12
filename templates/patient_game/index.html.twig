@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 {% endblock %}
 
 {% block body %}
-    <div class="enteteTitre">
+        <div class="enteteTitre">
         <img class="logo" src="{{ asset('images/logoTM.png') }}" alt="logo">
         <h1 class="titre">Associez les musiques aux participants</h1>
     </div>
@@ -34,34 +34,34 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>Associez chaque musique à un participant en cliquant sur la musique puis sur le participant.</p>
         <p>Une fois toutes les associations faites, cliquez sur le bouton "Résultat" pour voir le score.</p>
     </div>  
-    <div class="container">
-        <h2 class="titreContainer">Musiques</h2>
-        <h2 class="titreContainer">Message des participants</h2>
-    </div>
-    <div class="gridSelect">
-        <div id="music-container" class="music">
-            {% for music in musicDetails %}
-                <div data-music-id="{{ music.url }}" onclick="selectMusic('{{ music.url }}')" class="cardMusicS music-item">
-                    <iframe class="music-item" src="{{ music.url | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="pointer-events: none"></iframe>
-                </div>
-            {% endfor %}
+    {% if currentDate >= game.endDate %}
+        <div class="container">
+            <h2 class="titreContainer">Musiques</h2>
+            <h2 class="titreContainer">Message des participants</h2>
         </div>
+        <div class="gridSelect">
+            <div id="music-container" class="music">
+                {% for music in musicDetails %}
+                    <div data-music-id="{{ music.url }}" class="cardMusicS music-item">
+                        <iframe class="music-item" src="{{ music.url | replace({'open.spotify.com/track': 'open.spotify.com/embed/track'}) }}" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media" style="pointer-events: none"></iframe>
+                    </div>
+                {% endfor %}
+            </div>
 
-        <div id="participant-container" class="music">
-            {% for participation in participations %}
-                <div data-participant-id="{{ participation.participant.id }}" onclick="associateParticipant('{{ participation.participant.id }}')" class="cardMusic participant-item">
-                    <p><strong>{{ participation.participant.name }} : </strong><br>{{ participation.getSupportText() }}</p>
-                </div>
-            {% endfor %}
+            <div id="participant-container" class="music">
+                {% for participation in participations %}
+                    <div data-participant-id="{{ participation.participant.id }}" class="cardMusic participant-item">
+                        <p><strong>{{ participation.participant.name }} : </strong><br>{{ participation.getSupportText() }}</p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-
-    <button onclick="submitAssociations()" class="boutonEnregistrer">Résultat</button>
-    <div id="result-container">
-        <p id="score-text" class="score"></p>
-        <button id="show-correct-answers" onclick="goToResults()" style="display: none;" class="boutonEnregistrer2">Afficher les bonnes réponses</button>
-    </div>
-
+    {% else %}
+        <div class="procedureAttente">
+            <h1 class="titreAttente">Le jeu n'est pas encore disponible.</h1>
+            <p class="textAttente">Vous pourrez participer à partir du : {{ game.endDate | date('d/m/Y H:i') }}</p>
+        </div>
+    {% endif %}
 
 <script>
 let selectedMusic = null;
